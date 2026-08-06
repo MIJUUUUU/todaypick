@@ -1,0 +1,17 @@
+export type Ingredient = { name: string; amount: string; required: boolean; substitutes?: string[] };
+export type Recipe = {
+  id: string;
+  title: string;
+  emoji: string;
+  themes: string[];
+  servings: number;
+  difficulty: string;
+  cooking_time: number;
+  ingredients: Ingredient[];
+  preparation_steps: string[];
+  cooking_steps: string[];
+  safety_notes: string[];
+  match_rate?: number;
+  missing?: string[];
+  reason?: string;
+};

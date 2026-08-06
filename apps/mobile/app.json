@@ -1,0 +1,1 @@
+{"expo":{"name":"오늘픽","slug":"todaypick","version":"0.1.0","scheme":"todaypick","orientation":"portrait","userInterfaceStyle":"light","plugins":["expo-router"],"assetBundlePatterns":["**/*"],"ios":{"supportsTablet":true},"android":{"adaptiveIcon":{"backgroundColor":"#FFF8F0"}}}}
