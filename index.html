@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#fffaf4" />
+  <title>오늘픽 — 있는 재료로, 오늘의 요리를 픽하세요</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo-link" href="#home" aria-label="오늘픽 홈"><img src="image.png" alt="todaypick" /></a>
+    <p>있는 재료로, 오늘의 요리를 픽하세요.</p>
+  </header>
+
+  <main id="app" class="app-shell">
+    <section id="home" class="view active-view">
+      <div class="hero">
+        <p class="eyebrow">TODAYPICK · RECIPE ASSISTANT</p>
+        <h1>오늘 뭐 해먹지?</h1>
+        <p>지금 있는 재료와 오늘의 상황을 알려주면<br />바로 만들 수 있는 요리를 골라드려요.</p>
+      </div>
+      <div class="entry-grid">
+        <button class="entry-card" data-action="ingredients"><span class="entry-icon orange">🥔</span><span><b>재료로 찾기</b><small>냉장고 속 재료로 추천받기</small></span><i>→</i></button>
+        <button class="entry-card" data-action="themes"><span class="entry-icon purple">🏕</span><span><b>테마로 찾기</b><small>상황에 맞는 요리 고르기</small></span><i>→</i></button>
+        <button class="entry-card" data-action="search"><span class="entry-icon blue">⌕</span><span><b>메뉴 검색</b><small>원하는 메뉴를 바로 찾기</small></span><i>→</i></button>
+      </div>
+      <div class="section-head"><h2>오늘의 추천 테마</h2><span>지금 인기 있어요</span></div>
+      <div class="theme-pills" id="home-themes"></div>
+    </section>
+
+    <section id="ingredients" class="view">
+      <button class="back" data-action="home">← 홈</button>
+      <div class="page-title"><p class="eyebrow">STEP 1 · INGREDIENTS</p><h1>가지고 있는 재료를<br />알려주세요.</h1><p>하나 이상 선택하면 맞는 레시피를 찾아드려요.</p></div>
+      <div class="input-row"><input id="ingredient-input" placeholder="재료를 입력해보세요 (예: 감자)" /><button class="dark-btn" id="add-ingredient">추가</button></div>
+      <div class="chip-list" id="ingredient-chips"></div>
+      <div class="selected-box"><div class="section-head"><h2>입력한 재료</h2><span id="ingredient-count">0개</span></div><div id="selected-ingredients" class="selected-list"><span class="muted">아직 선택한 재료가 없어요.</span></div></div>
+      <div class="condition-grid"><label>인원<select id="servings"><option value="2">2인분</option><option value="1">1인분</option><option value="3">3인분</option><option value="4">4인분</option></select></label><label>최대 시간<select id="max-time"><option value="30">30분 이내</option><option value="15">15분 이내</option><option value="45">45분 이내</option><option value="60">제한 없음</option></select></label></div>
+      <button class="primary-btn" id="ingredient-submit">이 재료로 요리 찾기 <span>→</span></button>
+    </section>
+
+    <section id="themes" class="view"><button class="back" data-action="home">← 홈</button><div class="page-title"><p class="eyebrow">STEP 1 · MOOD</p><h1>어떤 상황의 요리를<br />찾고 있나요?</h1></div><div class="theme-grid" id="theme-grid"></div></section>
+
+    <section id="search" class="view"><button class="back" data-action="home">← 홈</button><div class="page-title"><p class="eyebrow">STEP 1 · SEARCH</p><h1>메뉴를 검색해보세요.</h1><p>검증된 기본 레시피에서 바로 찾아드려요.</p></div><div class="search-box"><span>⌕</span><input id="menu-input" placeholder="김치찌개, 파스타, 계란찜" /><button id="menu-submit">검색</button></div><div class="section-head"><h2>인기 메뉴</h2></div><div id="search-results" class="recipe-list"></div></section>
+
+    <section id="results" class="view"><button class="back" data-action="home">← 홈</button><div class="page-title"><p class="eyebrow">STEP 2 · PICKS</p><h1 id="result-title">지금 만들 수 있는 요리</h1><p id="result-subtitle"></p></div><div id="result-content"></div></section>
+
+    <section id="detail" class="view"><button class="back" data-action="results">← 추천 결과</button><div id="detail-content"></div></section>
+    <section id="checklist" class="view"><button class="back" data-action="go-detail">← 레시피 상세</button><div id="checklist-content"></div></section>
+    <section id="cooking" class="view"><button class="back" data-action="go-checklist">← 체크리스트</button><div id="cooking-content"></div></section>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
