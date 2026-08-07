@@ -205,13 +205,13 @@ MVP에서는 회원가입 없이 사용할 수 있다. 사용자가 입력한 �
 
 - Apple Developer Program: 연간 99달러
 - Google Play Console: 개발자 계정 등록비 25달러(1회)
-- Appwrite Cloud: 데이터베이스, 파일 저장, API 요청량에 따른 비용
-- NestJS API 서버: 서버 인스턴스와 네트워크 비용
+- FastAPI API 서버: 서버 인스턴스와 네트워크 비용
+- PostgreSQL: 데이터 저장, 백업, 연결 수에 따른 비용
 - AI API: 재료 분석, 요리 추천, 추가 재료 반영 호출량에 따른 종량제 비용
 
 Apple Developer Program은 앱스토어 배포를 위해 연간 99달러이며, Google Play Console은 개발자 등록 시 25달러의 일회성 등록비가 발생한다. [Apple Developer Program](https://developer.apple.com/kr/programs/), [Google Play Console](https://support.google.com/googleplay/android-developer/answer/6112435?hl=en)
 
-Appwrite Cloud에는 무료 플랜이 있지만 사용량이 증가하면 요금제가 달라질 수 있다. 자체 호스팅을 선택하면 서비스 이용료 대신 서버, 백업, 업데이트, 모니터링을 직접 부담한다. [Appwrite 요금제](https://new.appwrite.io/pricing), [Appwrite Self-hosting](https://vibes.appwrite.io/docs/advanced/self-hosting)
+이미지 저장은 MVP 단계에서 필수 요소가 아니며, 필요 시 Cloudflare R2 또는 S3 호환 스토리지를 별도 비용 항목으로 추가한다. 데이터베이스는 앱이 직접 접근하지 않고 API 서버를 통해서만 접근한다.
 
 ### 선택 비용
 
@@ -225,8 +225,8 @@ Appwrite Cloud에는 무료 플랜이 있지만 사용량이 증가하면 요금
 
 - 모든 레시피를 매번 AI로 생성하지 않고 검증된 레시피를 데이터베이스에 저장한다.
 - 재료명 표준화와 추천 결과를 캐시해 중복 AI 호출을 줄인다.
-- AI 호출은 NestJS 서버에서만 수행하고 사용자별 호출 횟수를 제한한다.
+- AI 호출은 FastAPI 서버에서만 수행하고 사용자별 호출 횟수를 제한한다.
 - 이미지 인식과 음성 기능은 사용량이 늘어난 뒤 별도 비용을 검토한다.
-- Appwrite Cloud와 자체 호스팅은 사용자 수와 운영 인력을 기준으로 전환한다.
+- PostgreSQL 호스팅과 서버 배포 환경은 사용자 수와 운영 인력을 기준으로 전환한다.
 
 정확한 월 비용은 사용자 수보다 `월간 추천 요청 수`, `AI 요청당 토큰`, `이미지 업로드량`, `동시 접속 수`에 따라 산정한다. 출시 전에는 이 네 가지 지표를 기준으로 비용 상한을 설정한다.

@@ -1,3 +1,29 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-export function PrimaryButton({ title, onPress }: { title: string; onPress: () => void }) { return <Pressable style={styles.button} onPress={onPress}><Text style={styles.text}>{title}</Text></Pressable>; }
-const styles = StyleSheet.create({ button: { padding: 16, borderRadius: 14, alignItems: 'center', backgroundColor: '#F26D3D', marginTop: 24 }, text: { color: '#FFF', fontWeight: '800' } });
+import { colors } from '../theme/colors';
+
+export function PrimaryButton({
+  title,
+  onPress,
+  disabled = false,
+}: {
+  title: string;
+  onPress: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <Pressable
+      style={[styles.button, disabled && styles.disabledButton]}
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <Text style={[styles.text, disabled && styles.disabledText]}>{title}</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  button: { padding: 16, borderRadius: 16, alignItems: 'center', backgroundColor: colors.ink, marginTop: 24 },
+  disabledButton: { backgroundColor: '#D8D1EA' },
+  text: { color: colors.surface, fontWeight: '800' },
+  disabledText: { color: '#8F86A8' },
+});
