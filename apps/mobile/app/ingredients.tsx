@@ -1,6 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRecipeDiscovery } from '../src/features/recipe-discovery/model/useRecipeDiscovery';
 import { ingredientCatalog } from '../src/shared/config/ingredientCatalog';
 import { PrimaryButton } from '../src/shared/ui/PrimaryButton';
@@ -8,6 +9,7 @@ import { colors } from '../src/shared/theme/colors';
 
 export default function Ingredients() {
   const d = useRecipeDiscovery();
+  const selectedScrollRef = useRef<ScrollView>(null);
   const [query, setQuery] = useState('');
   const [duplicateMessage, setDuplicateMessage] = useState('');
   const [highlightedIngredient, setHighlightedIngredient] = useState('');
@@ -37,6 +39,14 @@ export default function Ingredients() {
     return () => clearTimeout(timer);
   }, [highlightedIngredient]);
 
+  useEffect(() => {
+    if (d.ingredients.length <= 8) return;
+    const timer = setTimeout(() => {
+      selectedScrollRef.current?.flashScrollIndicators();
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [d.ingredients.length]);
+
   const showDuplicateFeedback = (name: string) => {
     setDuplicateMessage(`"${name}"은 이미 선택한 재료예요.`);
     setHighlightedIngredient(name);
@@ -54,18 +64,24 @@ export default function Ingredients() {
   return (
     <SafeAreaView style={s.safe}>
       <View style={s.screen}>
-        <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
-          <Pressable onPress={() => router.back()}><Text style={s.back}>← 홈</Text></Pressable>
+        <ScrollView style={s.topSection} contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
+          <View style={s.headerRow}>
+            <Pressable style={s.iconButton} onPress={() => router.back()}>
+              <MaterialCommunityIcons name="arrow-left" size={16} color={colors.muted} />
+            </Pressable>
+            <Text style={s.headerTitle}>재료로 찾기</Text>
+          </View>
           <Text style={s.eyebrow}>STEP 1 · INGREDIENTS</Text>
-          <Text style={s.title}>가지고 있는 재료를 알려주세요.</Text>
+          <Text style={s.title}>어떤 재료가 있으신가요?</Text>
+          <Text style={s.subtitle}>가지고 있는 재료를 추가하면 딱 맞는 레시피를 찾아드려요.</Text>
 
-          <Text style={s.section}>재료 검색</Text>
           <View style={[s.searchBox, (normalizedQuery.length > 0 || canAddCustom) && s.searchBoxActive]}>
+            <MaterialCommunityIcons name="magnify" size={18} color={colors.muted} style={s.searchIcon} />
             <TextInput
               value={query}
               onChangeText={setQuery}
               onSubmitEditing={() => query.trim() ? addIngredient(query.trim()) : undefined}
-              placeholder="재료를 입력해 검색하거나 직접 추가"
+              placeholder="재료명을 입력하고 추가하세요"
               placeholderTextColor={colors.muted}
               style={s.input}
               returnKeyType="done"
@@ -108,8 +124,8 @@ export default function Ingredients() {
           </View>
         )}
 
-        <View style={s.panel}>
-          <Text style={s.panelTitle}>추천 재료</Text>
+          <View style={s.panel}>
+          <Text style={s.panelTitle}>자주 찾는 재료</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.suggestedRow}>
               {suggestedItems.map(item => (
                 <Pressable key={item} style={s.chip} onPress={() => addIngredient(item)}>
@@ -118,10 +134,19 @@ export default function Ingredients() {
               ))}
             </ScrollView>
           </View>
+        </ScrollView>
 
-          <View style={s.panel}>
-            <Text style={s.panelTitle}>선택한 재료</Text>
-            {!!d.ingredients.length ? (
+        <View style={s.selectedSection}>
+          <Text style={s.panelTitle}>선택한 재료 {!!d.ingredients.length && `(${d.ingredients.length})`}</Text>
+          {!!d.ingredients.length ? (
+            <ScrollView
+              ref={selectedScrollRef}
+              style={s.selectedScrollable}
+              contentContainerStyle={s.selectedContent}
+              showsVerticalScrollIndicator
+              indicatorStyle="black"
+              alwaysBounceVertical={false}
+            >
               <View style={s.row}>
                 {d.ingredients.map(item => (
                   <Pressable key={item} style={[s.chip, s.active, highlightedIngredient === item && s.activeHighlighted]} onPress={() => d.removeIngredient(item)}>
@@ -129,18 +154,20 @@ export default function Ingredients() {
                   </Pressable>
                 ))}
               </View>
-            ) : (
+            </ScrollView>
+          ) : (
+            <View style={s.selectedEmpty}>
               <Text style={s.emptyText}>아직 선택한 재료가 없어요.</Text>
-            )}
-          </View>
-        </ScrollView>
+            </View>
+          )}
+        </View>
 
         <View style={s.footer}>
           <Text style={s.helper}>
             {canSubmit ? '선택한 태그를 기준으로 추천을 보여드려요.' : '최소 한 개의 재료를 선택해야 다음 단계로 갈 수 있어요.'}
           </Text>
           <PrimaryButton
-            title="이 재료로 요리 찾기 →"
+            title={`${d.ingredients.length || 0}개 재료로 레시피 찾기 →`}
             onPress={() => router.push({ pathname: '/results', params: { ingredients: d.ingredients.join(',') } })}
             disabled={!canSubmit}
           />
@@ -153,20 +180,34 @@ export default function Ingredients() {
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   screen: { flex: 1 },
-  container: { padding: 24, paddingBottom: 180 },
-  back: { color: colors.muted, marginBottom: 30 },
+  topSection: { flexGrow: 0, flexShrink: 0 },
+  container: { padding: 24, paddingBottom: 24 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  iconButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surfaceTint,
+  },
+  headerTitle: { fontSize: 15, fontWeight: '600', color: colors.ink },
   eyebrow: { fontSize: 11, letterSpacing: 1.5, color: colors.primary, fontWeight: '800', marginBottom: 12 },
-  title: { fontSize: 34, fontWeight: '800', color: colors.ink, lineHeight: 43, marginBottom: 28 },
-  section: { fontSize: 15, fontWeight: '800', color: colors.ink, marginBottom: 10 },
+  title: { fontSize: 28, fontWeight: '800', color: colors.ink, lineHeight: 38, marginBottom: 8 },
+  subtitle: { fontSize: 14, lineHeight: 22, color: colors.muted, marginBottom: 20 },
   searchBox: {
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: colors.surface,
     borderRadius: 18,
-    paddingHorizontal: 16,
+    paddingLeft: 40,
+    paddingRight: 16,
     paddingVertical: 6,
     marginBottom: 10,
   },
+  searchIcon: { position: 'absolute', left: 14, top: 16 },
   searchBoxActive: {
     borderBottomLeftRadius: 14,
     borderBottomRightRadius: 14,
@@ -217,12 +258,21 @@ const s = StyleSheet.create({
   active: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
   activeHighlighted: { shadowColor: colors.primary, shadowOpacity: 0.22, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, transform: [{ scale: 1.03 }] },
   activeText: { color: colors.primary, fontWeight: '800' },
+  selectedSection: {
+    flex: 1,
+    minHeight: 0,
+    paddingHorizontal: 24,
+    paddingTop: 0,
+    paddingBottom: 12,
+  },
+  selectedScrollable: {
+    flex: 1,
+    minHeight: 0,
+  },
+  selectedContent: { paddingBottom: 8, paddingRight: 4 },
+  selectedEmpty: { paddingBottom: 4 },
   emptyText: { color: colors.muted, lineHeight: 22 },
   footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
     paddingHorizontal: 24,
     paddingTop: 12,
     paddingBottom: 24,

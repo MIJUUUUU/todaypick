@@ -1,12 +1,22 @@
+from app.core.config import settings
 from app.data.ingredient_normalization import normalize_ingredient_name
 from app.domain.models import Recipe
+from app.providers.external_recipe_provider import ExternalRecipeProvider
+from app.providers.openai_reason_provider import OpenAIReasonProvider
 from app.repositories.recipe_repository import InMemoryRecipeRepository
 from app.schemas.recipe import RecipeRecommendation, RecommendRecipesRequest
 
 
 class RecipeService:
-    def __init__(self, repository: InMemoryRecipeRepository) -> None:
+    def __init__(
+        self,
+        repository: InMemoryRecipeRepository,
+        external_provider: ExternalRecipeProvider | None = None,
+        ai_reason_provider: OpenAIReasonProvider | None = None,
+    ) -> None:
         self._repository = repository
+        self._external_provider = external_provider
+        self._ai_reason_provider = ai_reason_provider
 
     def recommend(self, request: RecommendRecipesRequest) -> list[RecipeRecommendation]:
         normalized_ingredients = {
@@ -14,9 +24,37 @@ class RecipeService:
             for item in request.ingredients
             if normalize_ingredient_name(item)
         }
+        recipes = list(self._repository.list())
+        recommendations = self._rank_recipes(recipes, request, normalized_ingredients)
+
+        if (
+            len(recommendations) < settings.external_recipe_min_results
+            and settings.external_recipe_fallback_enabled
+            and self._external_provider is not None
+        ):
+            external_recipes = self._external_provider.search_recipes(request)
+            self._repository.save_many(external_recipes)
+            recipes = list(self._repository.list())
+            recommendations = self._rank_recipes(recipes, request, normalized_ingredients)
+
+        recommendations.sort(
+            key=lambda item: (item.match_rate, -len(item.missing), -item.recipe.cooking_time),
+            reverse=True,
+        )
+        return recommendations[:5]
+
+    def get_detail(self, recipe_id: str) -> Recipe | None:
+        return self._repository.get_by_id(recipe_id)
+
+    def _rank_recipes(
+        self,
+        recipes: list[Recipe],
+        request: RecommendRecipesRequest,
+        normalized_ingredients: set[str],
+    ) -> list[RecipeRecommendation]:
         recommendations: list[RecipeRecommendation] = []
 
-        for recipe in self._repository.list():
+        for recipe in recipes:
             if request.theme and request.theme not in recipe.themes:
                 continue
             if request.max_time is not None and recipe.cooking_time > request.max_time:
@@ -47,14 +85,7 @@ class RecipeService:
                 )
             )
 
-        recommendations.sort(
-            key=lambda item: (item.match_rate, -len(item.missing), -item.recipe.cooking_time),
-            reverse=True,
-        )
-        return recommendations[:5]
-
-    def get_detail(self, recipe_id: str) -> Recipe | None:
-        return self._repository.get_by_id(recipe_id)
+        return recommendations
 
     def _build_reason(
         self,
@@ -63,6 +94,17 @@ class RecipeService:
         missing: list[str],
         request: RecommendRecipesRequest,
     ) -> str:
+        ai_reason = None
+        if self._ai_reason_provider is not None:
+            ai_reason = self._ai_reason_provider.generate_reason(
+                recipe=recipe,
+                owned=owned,
+                missing=missing,
+                theme=request.theme,
+            )
+        if ai_reason:
+            return ai_reason
+
         if not missing:
             return f"{', '.join(owned[:3])} 재료가 이미 있고 바로 조리하기 좋은 레시피예요."
         if request.theme:

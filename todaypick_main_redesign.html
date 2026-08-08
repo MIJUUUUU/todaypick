@@ -1,0 +1,118 @@
+<div style="background: var(--surface-1); border-radius: 20px; padding: 1.25rem 1rem 0; max-width: 380px; margin: 0 auto;">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+    <div style="font-size: 20px; font-weight: 500;">
+      <span style="color: var(--text-primary);">today</span><span style="color: #534AB7;">pick</span>
+    </div>
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center;">
+      <i class="ti ti-user" style="font-size: 16px; color: var(--text-secondary);" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 1rem;">
+    <i class="ti ti-moon" style="font-size: 14px; vertical-align: -2px; margin-right: 4px;" aria-hidden="true"></i>
+    미주님, 저녁 메뉴 정하셨어요?
+  </p>
+
+  <p style="font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #534AB7; margin: 0 0 6px; text-transform: uppercase;">todaypick · recipe assistant</p>
+  <h1 style="font-size: 26px; margin: 0 0 10px;">오늘 뭐 해먹지?</h1>
+  <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 1.25rem;">지금 있는 재료와 오늘의 상황을 알려주면 바로 만들 수 있는 요리를 골라드려요.</p>
+
+  <div style="display: flex; gap: 8px; overflow-x: auto; margin: 0 0 1.5rem; padding-bottom: 4px;">
+    <div style="flex: 0 0 auto; width: 120px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 10px;">
+      <div style="width: 100%; height: 64px; border-radius: 8px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+        <i class="ti ti-soup" style="font-size: 22px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-size: 12px; font-weight: 500; margin: 0 0 2px;">된장찌개</p>
+      <p style="font-size: 11px; color: var(--text-muted); margin: 0;">20분</p>
+    </div>
+    <div style="flex: 0 0 auto; width: 120px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 10px;">
+      <div style="width: 100%; height: 64px; border-radius: 8px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+        <i class="ti ti-toque" style="font-size: 22px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-size: 12px; font-weight: 500; margin: 0 0 2px;">제육볶음</p>
+      <p style="font-size: 11px; color: var(--text-muted); margin: 0;">25분</p>
+    </div>
+    <div style="flex: 0 0 auto; width: 120px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 10px;">
+      <div style="width: 100%; height: 64px; border-radius: 8px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+        <i class="ti ti-bowl" style="font-size: 22px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-size: 12px; font-weight: 500; margin: 0 0 2px;">계란볶음밥</p>
+      <p style="font-size: 11px; color: var(--text-muted); margin: 0;">10분</p>
+    </div>
+  </div>
+
+  <button onclick="sendPrompt('재료로 찾기 화면도 만들어줘')" style="width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 12px;">
+    <div style="width: 40px; height: 40px; border-radius: 10px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <i class="ti ti-fridge" style="font-size: 20px; color: #534AB7;" aria-hidden="true"></i>
+    </div>
+    <div style="flex: 1;">
+      <p style="font-weight: 500; font-size: 15px; margin: 0 0 2px;">재료로 찾기</p>
+      <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">냉장고 속 재료로 추천받기</p>
+    </div>
+    <i class="ti ti-arrow-right" style="font-size: 18px; color: #534AB7;" aria-hidden="true"></i>
+  </button>
+
+  <button onclick="sendPrompt('테마로 찾기 화면도 만들어줘')" style="width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; border-radius: 10px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-mood-smile" style="font-size: 20px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <div style="flex: 1;">
+        <p style="font-weight: 500; font-size: 15px; margin: 0 0 2px;">테마로 찾기</p>
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">상황에 맞는 요리 고르기</p>
+      </div>
+      <i class="ti ti-arrow-right" style="font-size: 18px; color: #534AB7;" aria-hidden="true"></i>
+    </div>
+    <div style="display: flex; gap: 6px; padding-left: 52px;">
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 100px; background: #EEEDFE; color: #3C3489;">#자취요리</span>
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 100px; background: #EEEDFE; color: #3C3489;">#다이어트</span>
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 100px; background: #EEEDFE; color: #3C3489;">#술안주</span>
+    </div>
+  </button>
+
+  <p style="font-size: 14px; font-weight: 500; margin: 0 0 10px;">이번 주 인기 레시피</p>
+  <div style="display: flex; flex-direction: column; gap: 0; margin-bottom: 1rem;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border);">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-flame" style="font-size: 16px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-size: 13px; margin: 0; flex: 1;">김치찌개 황금레시피</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">15분</p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border);">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-flame" style="font-size: 16px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-size: 13px; margin: 0; flex: 1;">간단 크림파스타</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">18분</p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0;">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-flame" style="font-size: 16px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-size: 13px; margin: 0; flex: 1;">두부조림 반찬</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">22분</p>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-around; border-top: 0.5px solid var(--border); padding: 10px 0; margin: 0 -1rem;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <i class="ti ti-home" style="font-size: 20px; color: #534AB7;" aria-hidden="true"></i>
+      <span style="font-size: 10px; color: #534AB7;">홈</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <i class="ti ti-search" style="font-size: 20px; color: var(--text-muted);" aria-hidden="true"></i>
+      <span style="font-size: 10px; color: var(--text-muted);">검색</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <i class="ti ti-heart" style="font-size: 20px; color: var(--text-muted);" aria-hidden="true"></i>
+      <span style="font-size: 10px; color: var(--text-muted);">즐겨찾기</span>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+      <i class="ti ti-user" style="font-size: 20px; color: var(--text-muted);" aria-hidden="true"></i>
+      <span style="font-size: 10px; color: var(--text-muted);">마이</span>
+    </div>
+  </div>
+
+</div>

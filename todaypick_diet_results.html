@@ -1,0 +1,83 @@
+<div style="background: var(--surface-1); border-radius: 20px; padding: 1.25rem 1rem; max-width: 380px; margin: 0 auto;">
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem;">
+    <button onclick="sendPrompt('테마로 찾기 화면으로 돌아가줘')" style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;" aria-label="뒤로가기">
+      <i class="ti ti-arrow-left" style="font-size: 16px; color: var(--text-secondary);" aria-hidden="true"></i>
+    </button>
+    <p style="font-size: 15px; font-weight: 500; margin: 0;">다이어트</p>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;">
+    <div style="width: 40px; height: 40px; border-radius: 10px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <i class="ti ti-salad" style="font-size: 20px; color: #0F6E56;" aria-hidden="true"></i>
+    </div>
+    <div>
+      <p style="font-weight: 500; font-size: 16px; margin: 0 0 2px;">가볍고 든든한 다이어트 한끼</p>
+      <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">저칼로리 고단백 레시피 12개</p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 4px;">
+    <span style="flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 100px; background: #0F6E56; color: white;">전체</span>
+    <span style="flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">고단백</span>
+    <span style="flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">저탄수</span>
+    <span style="flex: 0 0 auto; font-size: 12px; padding: 6px 12px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">샐러드</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+
+    <button onclick="sendPrompt('닭가슴살 스테이크 샐러드 레시피 자세히 보여줘')" style="width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px; display: flex; gap: 12px;">
+      <div style="width: 64px; height: 64px; border-radius: 10px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-meat" style="font-size: 24px; color: #0F6E56;" aria-hidden="true"></i>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <p style="font-weight: 500; font-size: 14px; margin: 0 0 4px;">닭가슴살 스테이크 샐러드</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 6px;">단백질 35g · 320kcal</p>
+        <div style="display: flex; gap: 6px;">
+          <span style="font-size: 11px; color: var(--text-muted);"><i class="ti ti-clock" style="font-size: 12px; vertical-align: -1px;" aria-hidden="true"></i> 20분</span>
+        </div>
+      </div>
+    </button>
+
+    <button onclick="sendPrompt('두부 오트밀 볼 레시피 자세히 보여줘')" style="width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px; display: flex; gap: 12px;">
+      <div style="width: 64px; height: 64px; border-radius: 10px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-bowl" style="font-size: 24px; color: #0F6E56;" aria-hidden="true"></i>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <p style="font-weight: 500; font-size: 14px; margin: 0 0 4px;">두부 오트밀 볼</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 6px;">단백질 22g · 280kcal</p>
+        <div style="display: flex; gap: 6px;">
+          <span style="font-size: 11px; color: var(--text-muted);"><i class="ti ti-clock" style="font-size: 12px; vertical-align: -1px;" aria-hidden="true"></i> 10분</span>
+        </div>
+      </div>
+    </button>
+
+    <button onclick="sendPrompt('연두부 계란찜 레시피 자세히 보여줘')" style="width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px; display: flex; gap: 12px;">
+      <div style="width: 64px; height: 64px; border-radius: 10px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-egg" style="font-size: 24px; color: #0F6E56;" aria-hidden="true"></i>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <p style="font-weight: 500; font-size: 14px; margin: 0 0 4px;">연두부 계란찜</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 6px;">단백질 18g · 210kcal</p>
+        <div style="display: flex; gap: 6px;">
+          <span style="font-size: 11px; color: var(--text-muted);"><i class="ti ti-clock" style="font-size: 12px; vertical-align: -1px;" aria-hidden="true"></i> 15분</span>
+        </div>
+      </div>
+    </button>
+
+    <button onclick="sendPrompt('그릭요거트 오버나이트 오트 레시피 자세히 보여줘')" style="width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px; display: flex; gap: 12px;">
+      <div style="width: 64px; height: 64px; border-radius: 10px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="ti ti-cup" style="font-size: 24px; color: #0F6E56;" aria-hidden="true"></i>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <p style="font-weight: 500; font-size: 14px; margin: 0 0 4px;">그릭요거트 오버나이트 오트</p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 6px;">단백질 15g · 250kcal</p>
+        <div style="display: flex; gap: 6px;">
+          <span style="font-size: 11px; color: var(--text-muted);"><i class="ti ti-clock" style="font-size: 12px; vertical-align: -1px;" aria-hidden="true"></i> 5분 + 냉장 8시간</span>
+        </div>
+      </div>
+    </button>
+
+  </div>
+
+</div>

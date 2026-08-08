@@ -16,3 +16,10 @@ class InMemoryRecipeRepository:
             if recipe.id == recipe_id:
                 return recipe
         return None
+
+    def save_many(self, recipes: Sequence[Recipe]) -> None:
+        known_ids = {recipe.id for recipe in self._recipes}
+        for recipe in recipes:
+            if recipe.id not in known_ids:
+                self._recipes.append(recipe)
+                known_ids.add(recipe.id)

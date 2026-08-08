@@ -1,0 +1,50 @@
+<div style="background: var(--surface-1); border-radius: 20px; padding: 1.25rem 1rem; max-width: 380px; margin: 0 auto;">
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem;">
+    <button onclick="sendPrompt('메인 화면으로 돌아가줘')" style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;" aria-label="뒤로가기">
+      <i class="ti ti-arrow-left" style="font-size: 16px; color: var(--text-secondary);" aria-hidden="true"></i>
+    </button>
+    <p style="font-size: 15px; font-weight: 500; margin: 0;">재료로 찾기</p>
+  </div>
+
+  <p style="font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #534AB7; margin: 0 0 6px; text-transform: uppercase;">todaypick · recipe assistant</p>
+  <h1 style="font-size: 24px; margin: 0 0 8px;">냉장고에 뭐가<br/>있으신가요?</h1>
+  <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 1.25rem;">가지고 있는 재료를 추가하면 딱 맞는 레시피를 찾아드려요.</p>
+
+  <div style="position: relative; margin-bottom: 12px;">
+    <i class="ti ti-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted);" aria-hidden="true"></i>
+    <input type="text" placeholder="재료명을 입력하고 추가하세요" style="width: 100%; padding-left: 36px;" />
+  </div>
+
+  <div style="background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 1.5rem;">
+    <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 8px;">선택한 재료 3개</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 10px; border-radius: 100px; background: #EEEDFE; color: #3C3489;">
+        돼지고기 <i class="ti ti-x" style="font-size: 12px; cursor: pointer;" aria-hidden="true"></i>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 10px; border-radius: 100px; background: #EEEDFE; color: #3C3489;">
+        양파 <i class="ti ti-x" style="font-size: 12px; cursor: pointer;" aria-hidden="true"></i>
+      </span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 10px; border-radius: 100px; background: #EEEDFE; color: #3C3489;">
+        대파 <i class="ti ti-x" style="font-size: 12px; cursor: pointer;" aria-hidden="true"></i>
+      </span>
+    </div>
+  </div>
+
+  <p style="font-size: 14px; font-weight: 500; margin: 0 0 10px;">자주 찾는 재료</p>
+  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem;">
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">달걀</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">두부</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">김치</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">감자</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">애호박</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">베이컨</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">치즈</span>
+    <span style="font-size: 13px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary);">버섯</span>
+  </div>
+
+  <button onclick="sendPrompt('돼지고기, 양파, 대파로 만들 수 있는 레시피 추천해줘')" style="width: 100%; background: #534AB7; color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 500;">
+    3개 재료로 레시피 찾기 <i class="ti ti-arrow-right" style="font-size: 16px; vertical-align: -2px; margin-left: 4px;" aria-hidden="true"></i>
+  </button>
+
+</div>

@@ -1,0 +1,80 @@
+<div style="background: var(--surface-1); border-radius: 20px; padding: 1.25rem 1rem; max-width: 380px; margin: 0 auto;">
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem;">
+    <button onclick="sendPrompt('메인 화면으로 돌아가줘')" style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;" aria-label="뒤로가기">
+      <i class="ti ti-arrow-left" style="font-size: 16px; color: var(--text-secondary);" aria-hidden="true"></i>
+    </button>
+    <p style="font-size: 15px; font-weight: 500; margin: 0;">테마로 찾기</p>
+  </div>
+
+  <p style="font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: #534AB7; margin: 0 0 6px; text-transform: uppercase;">todaypick · recipe assistant</p>
+  <h1 style="font-size: 24px; margin: 0 0 8px;">오늘 상황에 맞는<br/>요리를 골라보세요</h1>
+  <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 1.5rem;">테마를 선택하면 딱 맞는 레시피를 바로 추천해드려요.</p>
+
+  <div style="position: relative; margin-bottom: 1.5rem;">
+    <i class="ti ti-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted);" aria-hidden="true"></i>
+    <input type="text" placeholder="원하는 테마를 검색해보세요" style="width: 100%; padding-left: 36px;" />
+  </div>
+
+  <p style="font-size: 14px; font-weight: 500; margin: 0 0 10px;">인기 테마</p>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 1.5rem;">
+
+    <button onclick="sendPrompt('자취요리 테마 레시피 추천해줘')" style="text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <i class="ti ti-building-skyscraper" style="font-size: 18px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-weight: 500; font-size: 14px; margin: 0 0 2px;">자취요리</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">간단하게 한끼</p>
+    </button>
+
+    <button onclick="sendPrompt('다이어트 테마 레시피 추천해줘')" style="text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #E1F5EE; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <i class="ti ti-salad" style="font-size: 18px; color: #0F6E56;" aria-hidden="true"></i>
+      </div>
+      <p style="font-weight: 500; font-size: 14px; margin: 0 0 2px;">다이어트</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">가볍고 든든하게</p>
+    </button>
+
+    <button onclick="sendPrompt('술안주 테마 레시피 추천해줘')" style="text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #FAECE7; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <i class="ti ti-glass-full" style="font-size: 18px; color: #993C1D;" aria-hidden="true"></i>
+      </div>
+      <p style="font-weight: 500; font-size: 14px; margin: 0 0 2px;">술안주</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">한잔과 함께</p>
+    </button>
+
+    <button onclick="sendPrompt('초스피드 테마 레시피 추천해줘')" style="text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #FAEEDA; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <i class="ti ti-bolt" style="font-size: 18px; color: #854F0B;" aria-hidden="true"></i>
+      </div>
+      <p style="font-weight: 500; font-size: 14px; margin: 0 0 2px;">초스피드</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">10분 완성</p>
+    </button>
+
+    <button onclick="sendPrompt('손님초대 테마 레시피 추천해줘')" style="text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #FBEAF0; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <i class="ti ti-users" style="font-size: 18px; color: #993556;" aria-hidden="true"></i>
+      </div>
+      <p style="font-weight: 500; font-size: 14px; margin: 0 0 2px;">손님초대</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">근사한 한상</p>
+    </button>
+
+    <button onclick="sendPrompt('해장 테마 레시피 추천해줘')" style="text-align: left; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #EEEDFE; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+        <i class="ti ti-soup" style="font-size: 18px; color: #534AB7;" aria-hidden="true"></i>
+      </div>
+      <p style="font-weight: 500; font-size: 14px; margin: 0 0 2px;">해장</p>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">속을 풀어줘요</p>
+    </button>
+
+  </div>
+
+  <p style="font-size: 14px; font-weight: 500; margin: 0 0 10px;">계절 테마</p>
+  <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+    <span onclick="sendPrompt('여름 보양식 테마 레시피 추천해줘')" style="flex: 0 0 auto; font-size: 12px; padding: 8px 14px; border-radius: 100px; background: #EEEDFE; color: #3C3489; cursor: pointer;">#여름보양식</span>
+    <span onclick="sendPrompt('냉면 테마 레시피 추천해줘')" style="flex: 0 0 auto; font-size: 12px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary); cursor: pointer;">#냉면</span>
+    <span onclick="sendPrompt('삼계탕 테마 레시피 추천해줘')" style="flex: 0 0 auto; font-size: 12px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary); cursor: pointer;">#삼계탕</span>
+    <span onclick="sendPrompt('입맛없을때 테마 레시피 추천해줘')" style="flex: 0 0 auto; font-size: 12px; padding: 8px 14px; border-radius: 100px; background: var(--surface-2); border: 0.5px solid var(--border); color: var(--text-secondary); cursor: pointer;">#입맛없을때</span>
+  </div>
+
+</div>
