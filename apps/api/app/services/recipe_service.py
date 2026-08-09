@@ -4,13 +4,14 @@ from app.domain.models import Recipe
 from app.providers.external_recipe_provider import ExternalRecipeProvider
 from app.providers.openai_reason_provider import OpenAIReasonProvider
 from app.repositories.recipe_repository import InMemoryRecipeRepository
+from app.repositories.sqlalchemy_recipe_repository import SqlAlchemyRecipeRepository
 from app.schemas.recipe import RecipeRecommendation, RecommendRecipesRequest
 
 
 class RecipeService:
     def __init__(
         self,
-        repository: InMemoryRecipeRepository,
+        repository: InMemoryRecipeRepository | SqlAlchemyRecipeRepository,
         external_provider: ExternalRecipeProvider | None = None,
         ai_reason_provider: OpenAIReasonProvider | None = None,
     ) -> None:
@@ -33,7 +34,10 @@ class RecipeService:
             and self._external_provider is not None
         ):
             external_recipes = self._external_provider.search_recipes(request)
-            self._repository.save_many(external_recipes)
+            if hasattr(self._repository, "save_many"):
+                self._repository.save_many(external_recipes)
+            elif hasattr(self._repository, "upsert_many"):
+                self._repository.upsert_many(external_recipes)
             recipes = list(self._repository.list())
             recommendations = self._rank_recipes(recipes, request, normalized_ingredients)
 
