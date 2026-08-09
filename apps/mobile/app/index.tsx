@@ -66,6 +66,7 @@ export default function Home() {
     setOpeningId(signal.id);
     try {
       const recipe = await recipeApi.detail(signal.id);
+      void recipeApi.trackClick({ recipe_id: recipe.id, source: 'home' }).catch(() => undefined);
       router.push({
         pathname: '/recipe/[id]',
         params: {
@@ -83,6 +84,7 @@ export default function Home() {
   };
 
   const openHomeCard = (card: HomeRecipeCard) => {
+    void recipeApi.trackClick({ recipe_id: card.recipe.id, source: 'home' }).catch(() => undefined);
     router.push({
       pathname: '/recipe/[id]',
       params: {

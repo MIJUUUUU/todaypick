@@ -11,9 +11,14 @@ export type HomeRecipeCard = {
   common_ingredient_rate: number;
   highlight: string;
 };
+export type RecipeSearchEventRequest = { ingredients: string[]; theme?: string; result_recipe_ids: string[] };
+export type RecipeClickEventRequest = { recipe_id: string; source: string; theme?: string; ingredients?: string[] };
 
 export const recipeApi = {
   home: (limit = 6) => apiFetch<HomeRecipeCard[]>(`/recipes/home?limit=${limit}`),
+  rebuildHome: () => apiFetch<HomeRecipeCard[]>('/recipes/home/rebuild', { method: 'POST' }),
+  trackSearch: (request: RecipeSearchEventRequest) => apiFetch<void>('/recipes/events/search', { method: 'POST', body: JSON.stringify(request) }),
+  trackClick: (request: RecipeClickEventRequest) => apiFetch<void>('/recipes/events/click', { method: 'POST', body: JSON.stringify(request) }),
   recommend: (request: RecommendRequest) => apiFetch<Recommendation[]>('/recipes/recommend', { method: 'POST', body: JSON.stringify(request) }),
   detail: (id: string) => apiFetch<Recipe>(`/recipes/${id}`),
 };
