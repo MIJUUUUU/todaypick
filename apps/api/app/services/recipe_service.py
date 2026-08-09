@@ -6,7 +6,7 @@ from app.providers.external_recipe_provider import ExternalRecipeProvider
 from app.providers.openai_reason_provider import OpenAIReasonProvider
 from app.repositories.recipe_repository import InMemoryRecipeRepository
 from app.repositories.sqlalchemy_recipe_repository import SqlAlchemyRecipeRepository
-from app.schemas.recipe import HomeRecipeCard, RecipeRecommendation, RecommendRecipesRequest
+from app.schemas.recipe import HomeRecipeCard, RecipeClickEventRequest, RecipeRecommendation, RecipeSearchEventRequest, RecommendRecipesRequest
 
 
 class RecipeService:
@@ -54,8 +54,9 @@ class RecipeService:
     def get_home_recipes(self, limit: int = 6) -> list[HomeRecipeCard]:
         recipes_by_id = {recipe.id: recipe for recipe in self._repository.list()}
         cards: list[HomeRecipeCard] = []
+        signals = list(self._repository.list_home_signals()) if hasattr(self._repository, "list_home_signals") else HOME_RECIPE_SIGNALS
 
-        for signal in HOME_RECIPE_SIGNALS:
+        for signal in signals:
             recipe = recipes_by_id.get(signal.recipe_id)
             if recipe is None:
                 continue
@@ -67,7 +68,7 @@ class RecipeService:
             cards.append(
                 HomeRecipeCard(
                     recipe=Recipe(
-                        **recipe.model_dump(),
+                        **self._base_recipe_payload(recipe),
                         reason="최근 많이 찾았고 집에 자주 있는 재료로 바로 연결되기 쉬운 레시피예요.",
                     ),
                     popularity_score=score,
@@ -80,6 +81,28 @@ class RecipeService:
 
         cards.sort(key=lambda item: item.popularity_score, reverse=True)
         return cards[:limit]
+
+    def track_search_event(self, request: RecipeSearchEventRequest) -> None:
+        if hasattr(self._repository, "log_search_event"):
+            self._repository.log_search_event(
+                ingredients=request.ingredients,
+                result_recipe_ids=request.result_recipe_ids,
+                theme=request.theme,
+            )
+
+    def track_recipe_click(self, request: RecipeClickEventRequest) -> None:
+        if hasattr(self._repository, "log_recipe_click"):
+            self._repository.log_recipe_click(
+                recipe_id=request.recipe_id,
+                source=request.source,
+                theme=request.theme,
+                ingredients=request.ingredients,
+            )
+
+    def rebuild_home_signals(self) -> list[HomeRecipeCard]:
+        if hasattr(self._repository, "recompute_home_signals"):
+            self._repository.recompute_home_signals()
+        return self.get_home_recipes()
 
     def _rank_recipes(
         self,
@@ -107,7 +130,7 @@ class RecipeService:
             recommendations.append(
                 RecipeRecommendation(
                     recipe=Recipe(
-                        **recipe.model_dump(),
+                        **self._base_recipe_payload(recipe),
                         match_rate=match_rate,
                         missing=missing,
                         reason=reason,
@@ -153,3 +176,6 @@ class RecipeService:
         common_ingredient_rate: int,
     ) -> float:
         return round(search_volume * 0.55 + pantry_fit * 0.3 + common_ingredient_rate * 0.15, 2)
+
+    def _base_recipe_payload(self, recipe: Recipe) -> dict:
+        return recipe.model_dump(exclude={"match_rate", "missing", "reason"})
