@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.api.deps import get_recipe_service
 from app.domain.models import Recipe
-from app.schemas.recipe import HomeRecipeCard, RecipeRecommendation, RecommendRecipesRequest
+from app.schemas.recipe import HomeRecipeCard, RecipeClickEventRequest, RecipeRecommendation, RecipeSearchEventRequest, RecommendRecipesRequest
 from app.services.recipe_service import RecipeService
 
 
@@ -15,6 +15,31 @@ def get_home_recipes(
     service: RecipeService = Depends(get_recipe_service),
 ) -> list[HomeRecipeCard]:
     return service.get_home_recipes(limit=limit)
+
+
+@router.post("/home/rebuild", response_model=list[HomeRecipeCard])
+def rebuild_home_recipes(
+    service: RecipeService = Depends(get_recipe_service),
+) -> list[HomeRecipeCard]:
+    return service.rebuild_home_signals()
+
+
+@router.post("/events/search", status_code=status.HTTP_204_NO_CONTENT)
+def track_search_event(
+    request: RecipeSearchEventRequest,
+    service: RecipeService = Depends(get_recipe_service),
+) -> Response:
+    service.track_search_event(request)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/events/click", status_code=status.HTTP_204_NO_CONTENT)
+def track_click_event(
+    request: RecipeClickEventRequest,
+    service: RecipeService = Depends(get_recipe_service),
+) -> Response:
+    service.track_recipe_click(request)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post("/recommend", response_model=list[RecipeRecommendation])

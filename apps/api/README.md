@@ -73,11 +73,13 @@ alembic revision --autogenerate -m "describe change"
 - `ingredients`: 재료 마스터
 - `recipe_ingredients`: 레시피-재료 매핑
 - `recipe_themes`: 레시피-테마 매핑
+- `home_recipe_signals`: 홈 추천 랭킹 시그널
 
 ## Import 구조
 
 - `app/data/recipes.py`: 서비스 기본 mock 레시피
 - `app/data/external_recipes.py`: 외부 검색 fallback seed
+- `app/data/home_rankings.py`: 홈 추천 seed 시그널
 - `app/scripts/import_recipes.py`: PostgreSQL 적재 진입점
 
-현재 seed import는 mock 레시피와 fallback 레시피를 함께 DB에 적재한다.
+현재 seed import는 mock 레시피, fallback 레시피, 홈 추천 시그널을 함께 DB에 적재한다.

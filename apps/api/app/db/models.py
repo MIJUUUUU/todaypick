@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, UniqueConstraint
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,6 +27,14 @@ class RecipeModel(Base):
         cascade="all, delete-orphan",
     )
     themes: Mapped[list[RecipeThemeModel]] = relationship(
+        back_populates="recipe",
+        cascade="all, delete-orphan",
+    )
+    home_signal: Mapped[HomeRecipeSignalModel | None] = relationship(
+        back_populates="recipe",
+        cascade="all, delete-orphan",
+    )
+    click_events: Mapped[list[RecipeClickEventModel]] = relationship(
         back_populates="recipe",
         cascade="all, delete-orphan",
     )
@@ -68,3 +78,38 @@ class RecipeThemeModel(Base):
     theme: Mapped[str] = mapped_column(String(120), nullable=False)
 
     recipe: Mapped[RecipeModel] = relationship(back_populates="themes")
+
+
+class HomeRecipeSignalModel(Base):
+    __tablename__ = "home_recipe_signals"
+
+    recipe_id: Mapped[str] = mapped_column(ForeignKey("recipes.id", ondelete="CASCADE"), primary_key=True)
+    search_volume: Mapped[int] = mapped_column(Integer, nullable=False)
+    pantry_fit: Mapped[int] = mapped_column(Integer, nullable=False)
+    common_ingredient_rate: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    recipe: Mapped[RecipeModel] = relationship(back_populates="home_signal")
+
+
+class RecipeSearchEventModel(Base):
+    __tablename__ = "recipe_search_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    theme: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    ingredients: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    result_recipe_ids: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    selected_ingredient_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+
+class RecipeClickEventModel(Base):
+    __tablename__ = "recipe_click_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    recipe_id: Mapped[str] = mapped_column(ForeignKey("recipes.id", ondelete="CASCADE"), nullable=False)
+    source: Mapped[str] = mapped_column(String(60), nullable=False)
+    theme: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    ingredients: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+    recipe: Mapped[RecipeModel] = relationship(back_populates="click_events")

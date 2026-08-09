@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 
+from app.data.home_rankings import HOME_RECIPE_SIGNALS, HomeRecipeSignal
 from app.data.recipes import MOCK_RECIPES
 from app.domain.models import Recipe
 
@@ -23,3 +24,26 @@ class InMemoryRecipeRepository:
             if recipe.id not in known_ids:
                 self._recipes.append(recipe)
                 known_ids.add(recipe.id)
+
+    def list_home_signals(self) -> Sequence[HomeRecipeSignal]:
+        return HOME_RECIPE_SIGNALS
+
+    def log_search_event(
+        self,
+        ingredients: Sequence[str],
+        result_recipe_ids: Sequence[str],
+        theme: str | None = None,
+    ) -> None:
+        return None
+
+    def log_recipe_click(
+        self,
+        recipe_id: str,
+        source: str,
+        theme: str | None = None,
+        ingredients: Sequence[str] | None = None,
+    ) -> None:
+        return None
+
+    def recompute_home_signals(self) -> Sequence[HomeRecipeSignal]:
+        return HOME_RECIPE_SIGNALS
