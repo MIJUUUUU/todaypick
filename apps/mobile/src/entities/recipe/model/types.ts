@@ -3,6 +3,9 @@ export type Recipe = {
   id: string;
   title: string;
   emoji: string;
+  thumbnail_url?: string | null;
+  image_url?: string | null;
+  image_credit?: string | null;
   themes: string[];
   servings: number;
   difficulty: string;

@@ -74,6 +74,7 @@ alembic revision --autogenerate -m "describe change"
 - `recipe_ingredients`: 레시피-재료 매핑
 - `recipe_themes`: 레시피-테마 매핑
 - `home_recipe_signals`: 홈 추천 랭킹 시그널
+- `recipes.thumbnail_url`, `recipes.image_url`: 원격 이미지 URL
 
 ## Import 구조
 
@@ -83,3 +84,5 @@ alembic revision --autogenerate -m "describe change"
 - `app/scripts/import_recipes.py`: PostgreSQL 적재 진입점
 
 현재 seed import는 mock 레시피, fallback 레시피, 홈 추천 시그널을 함께 DB에 적재한다.
+
+이미지는 DB에 바이너리로 저장하지 않고 `recipes.thumbnail_url`, `recipes.image_url`에 원격 URL만 저장하는 구조다.

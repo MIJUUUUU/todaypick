@@ -116,6 +116,11 @@ export default function Home() {
           <Text style={s.title}>오늘 뭐 해먹지?</Text>
           <Text style={s.subtitle}>지금 있는 재료와 오늘의 상황을 알려주면 바로 만들 수 있는 요리를 골라드려요.</Text>
 
+          <View style={s.featuredHeader}>
+            <Text style={s.featuredHeaderTitle}>오늘 이런 메뉴 어때요?</Text>
+            <Text style={s.featuredHeaderText}>지금 바로 해먹기 좋은 대표 메뉴를 골랐어요.</Text>
+          </View>
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featuredRow}>
             {loadingHome && !featuredRecipes.length && (
               <View style={s.featuredLoading}>
@@ -130,25 +135,29 @@ export default function Home() {
                     {isOpening ? (
                       <ActivityIndicator color={colors.primary} />
                     ) : (
-                      <MaterialCommunityIcons name={recipe.icon} size={24} color={colors.primary} />
+                      <MaterialCommunityIcons name={recipe.icon} size={22} color={colors.primary} />
                     )}
                   </View>
                   <Text style={s.featuredTitle}>{recipe.title}</Text>
-                  <Text style={s.featuredMeta}>인기 검색 · 재료 보유율 상위</Text>
+                  <Text style={s.featuredMeta}>{getFeaturedCopy(recipe.id)}</Text>
                 </Pressable>
               );
             })}
             {!!featuredRecipes.length && featuredRecipes.map(card => (
               <Pressable key={card.recipe.id} style={s.featuredCard} onPress={() => openHomeCard(card)}>
                 <View style={s.featuredVisual}>
-                  <MaterialCommunityIcons
-                    name={getRecipeIcon(card.recipe.themes)}
-                    size={24}
-                    color={colors.primary}
-                  />
+                  {card.recipe.thumbnail_url ? (
+                    <Image source={{ uri: card.recipe.thumbnail_url }} style={s.featuredImage} />
+                  ) : (
+                    <MaterialCommunityIcons
+                      name={getRecipeIcon(card.recipe.themes)}
+                      size={22}
+                      color={colors.primary}
+                    />
+                  )}
                 </View>
                 <Text style={s.featuredTitle}>{card.recipe.title}</Text>
-                <Text style={s.featuredMeta}>{card.highlight}</Text>
+                <Text style={s.featuredMeta}>{getFeaturedCopy(card.recipe.id)}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -212,6 +221,18 @@ function getRecipeIcon(themes: string[]) {
   return 'chef-hat' as const;
 }
 
+function getFeaturedCopy(recipeId: string) {
+  const labels: Record<string, string> = {
+    'gamja-egg-stirfry': '빠르게 만들기 좋아요',
+    'kimchi-pork-stirfry': '든든한 한 끼 메뉴',
+    'kimchi-jeon': '자주 고르는 메뉴',
+    'tofu-ramen-hotpot': '냉장고 재료 활용',
+    'bacon-garlic-pasta': '가볍게 분위기 내기',
+    'tofu-cabbage-salad-bowl': '가볍게 먹기 좋아요',
+  };
+  return labels[recipeId] ?? '오늘의 추천 메뉴';
+}
+
 function Entry({
   title,
   text,
@@ -264,12 +285,15 @@ const s = StyleSheet.create({
   eyebrow: { fontSize: 11, letterSpacing: 1.5, color: colors.primary, fontWeight: '800', marginBottom: 6 },
   title: { fontSize: 32, fontWeight: '800', color: colors.ink, marginBottom: 10 },
   subtitle: { fontSize: 14, lineHeight: 22, color: colors.muted, marginBottom: 18 },
-  featuredRow: { gap: 10, paddingBottom: 4, marginBottom: 18 },
+  featuredHeader: { marginBottom: 12 },
+  featuredHeaderTitle: { fontSize: 17, fontWeight: '800', color: colors.ink, marginBottom: 4 },
+  featuredHeaderText: { fontSize: 13, lineHeight: 20, color: colors.muted },
+  featuredRow: { gap: 12, paddingBottom: 4, marginBottom: 18 },
   featuredCard: {
     width: 144,
     borderRadius: 14,
-    padding: 10,
-    backgroundColor: colors.surfaceTint,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: colors.line,
   },
@@ -281,18 +305,20 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: colors.line,
-    backgroundColor: colors.surfaceTint,
+    backgroundColor: '#FFFFFF',
   },
   featuredVisual: {
-    height: 66,
+    height: 60,
     borderRadius: 10,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: '#F7F7FB',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
+    overflow: 'hidden',
   },
+  featuredImage: { width: '100%', height: '100%' },
   featuredTitle: { fontSize: 14, fontWeight: '700', color: colors.ink, marginBottom: 4 },
-  featuredMeta: { fontSize: 11, color: colors.muted, lineHeight: 16 },
+  featuredMeta: { fontSize: 12, color: colors.muted, lineHeight: 18 },
   actionCards: { gap: 10, marginBottom: 20 },
   card: {
     backgroundColor: colors.surfaceTint,

@@ -12,6 +12,9 @@ class Recipe(BaseModel):
     id: str
     title: str
     emoji: str
+    thumbnail_url: str | None = None
+    image_url: str | None = None
+    image_credit: str | None = None
     themes: list[str]
     servings: int
     difficulty: str
