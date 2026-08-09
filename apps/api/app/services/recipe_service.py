@@ -1,11 +1,12 @@
 from app.core.config import settings
+from app.data.home_rankings import HOME_RECIPE_SIGNALS
 from app.data.ingredient_normalization import normalize_ingredient_name
 from app.domain.models import Recipe
 from app.providers.external_recipe_provider import ExternalRecipeProvider
 from app.providers.openai_reason_provider import OpenAIReasonProvider
 from app.repositories.recipe_repository import InMemoryRecipeRepository
 from app.repositories.sqlalchemy_recipe_repository import SqlAlchemyRecipeRepository
-from app.schemas.recipe import RecipeRecommendation, RecommendRecipesRequest
+from app.schemas.recipe import HomeRecipeCard, RecipeRecommendation, RecommendRecipesRequest
 
 
 class RecipeService:
@@ -49,6 +50,36 @@ class RecipeService:
 
     def get_detail(self, recipe_id: str) -> Recipe | None:
         return self._repository.get_by_id(recipe_id)
+
+    def get_home_recipes(self, limit: int = 6) -> list[HomeRecipeCard]:
+        recipes_by_id = {recipe.id: recipe for recipe in self._repository.list()}
+        cards: list[HomeRecipeCard] = []
+
+        for signal in HOME_RECIPE_SIGNALS:
+            recipe = recipes_by_id.get(signal.recipe_id)
+            if recipe is None:
+                continue
+            score = self._get_home_score(
+                signal.search_volume,
+                signal.pantry_fit,
+                signal.common_ingredient_rate,
+            )
+            cards.append(
+                HomeRecipeCard(
+                    recipe=Recipe(
+                        **recipe.model_dump(),
+                        reason="최근 많이 찾았고 집에 자주 있는 재료로 바로 연결되기 쉬운 레시피예요.",
+                    ),
+                    popularity_score=score,
+                    search_volume=signal.search_volume,
+                    pantry_fit=signal.pantry_fit,
+                    common_ingredient_rate=signal.common_ingredient_rate,
+                    highlight="인기 검색 · 재료 보유율 상위",
+                )
+            )
+
+        cards.sort(key=lambda item: item.popularity_score, reverse=True)
+        return cards[:limit]
 
     def _rank_recipes(
         self,
@@ -114,3 +145,11 @@ class RecipeService:
         if request.theme:
             return f"{request.theme} 테마에 맞고, {', '.join(missing[:2])}만 추가하면 만들 수 있어요."
         return f"{', '.join(owned[:2])} 재료를 활용할 수 있고 부족한 재료는 {len(missing)}개예요."
+
+    def _get_home_score(
+        self,
+        search_volume: int,
+        pantry_fit: int,
+        common_ingredient_rate: int,
+    ) -> float:
+        return round(search_volume * 0.55 + pantry_fit * 0.3 + common_ingredient_rate * 0.15, 2)

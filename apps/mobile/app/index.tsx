@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { recipeApi } from '../src/entities/recipe/api/recipeApi';
+import { recipeApi, type HomeRecipeCard } from '../src/entities/recipe/api/recipeApi';
 import type { Recipe } from '../src/entities/recipe/model/types';
 import { colors } from '../src/shared/theme/colors';
 
@@ -15,7 +15,7 @@ type HomeRecipeSignal = {
   commonIngredientRate: number;
 };
 
-const recipeSignals: HomeRecipeSignal[] = [
+const fallbackSignals: HomeRecipeSignal[] = [
   { id: 'kimchi-pork-stirfry', title: '김치돼지고기볶음', icon: 'chef-hat', searchVolume: 96, pantryFit: 84, commonIngredientRate: 78 },
   { id: 'gamja-egg-stirfry', title: '감자계란볶음', icon: 'rice', searchVolume: 92, pantryFit: 88, commonIngredientRate: 91 },
   { id: 'kimchi-jeon', title: '김치전', icon: 'pot-steam-outline', searchVolume: 87, pantryFit: 82, commonIngredientRate: 76 },
@@ -31,15 +31,22 @@ function getHomeScore(signal: HomeRecipeSignal) {
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
   const [openingId, setOpeningId] = useState<string | null>(null);
+  const [homeCards, setHomeCards] = useState<HomeRecipeCard[]>([]);
+  const [loadingHome, setLoadingHome] = useState(true);
   const splashOpacity = useRef(new Animated.Value(1)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
-  const sortedSignals = useMemo(
-    () => [...recipeSignals].sort((a, b) => getHomeScore(b) - getHomeScore(a)),
-    []
-  );
-  const featuredRecipes = sortedSignals.slice(0, 3);
-  const popularRecipes = sortedSignals.slice(0, 4);
+  const sortedSignals = useMemo(() => [...fallbackSignals].sort((a, b) => getHomeScore(b) - getHomeScore(a)), []);
+
+  useEffect(() => {
+    recipeApi.home(6)
+      .then(setHomeCards)
+      .catch(() => setHomeCards([]))
+      .finally(() => setLoadingHome(false));
+  }, []);
+
+  const featuredRecipes = homeCards.slice(0, 3);
+  const popularRecipes = homeCards.slice(0, 4);
 
   useEffect(() => {
     const holdTimer = setTimeout(() => {
@@ -75,6 +82,17 @@ export default function Home() {
     }
   };
 
+  const openHomeCard = (card: HomeRecipeCard) => {
+    router.push({
+      pathname: '/recipe/[id]',
+      params: {
+        id: card.recipe.id,
+        data: JSON.stringify(card.recipe),
+        source: 'home',
+      },
+    });
+  };
+
   return (
     <SafeAreaView style={s.safe}>
       {showSplash && (
@@ -97,7 +115,12 @@ export default function Home() {
           <Text style={s.subtitle}>지금 있는 재료와 오늘의 상황을 알려주면 바로 만들 수 있는 요리를 골라드려요.</Text>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featuredRow}>
-            {featuredRecipes.map(recipe => {
+            {loadingHome && !featuredRecipes.length && (
+              <View style={s.featuredLoading}>
+                <ActivityIndicator color={colors.primary} />
+              </View>
+            )}
+            {!loadingHome && !featuredRecipes.length && sortedSignals.slice(0, 3).map(recipe => {
               const isOpening = openingId === recipe.id;
               return (
                 <Pressable key={recipe.id} style={s.featuredCard} onPress={() => openRecipePreview(recipe)}>
@@ -113,6 +136,19 @@ export default function Home() {
                 </Pressable>
               );
             })}
+            {!!featuredRecipes.length && featuredRecipes.map(card => (
+              <Pressable key={card.recipe.id} style={s.featuredCard} onPress={() => openHomeCard(card)}>
+                <View style={s.featuredVisual}>
+                  <MaterialCommunityIcons
+                    name={getRecipeIcon(card.recipe.themes)}
+                    size={24}
+                    color={colors.primary}
+                  />
+                </View>
+                <Text style={s.featuredTitle}>{card.recipe.title}</Text>
+                <Text style={s.featuredMeta}>{card.highlight}</Text>
+              </Pressable>
+            ))}
           </ScrollView>
 
           <View style={s.actionCards}>
@@ -134,10 +170,23 @@ export default function Home() {
 
           <Text style={s.sectionTitle}>이번 주 인기 레시피</Text>
           <View style={s.popularList}>
-            {popularRecipes.map((recipe, index) => (
+            {!!popularRecipes.length && popularRecipes.map((card, index) => (
+              <Pressable
+                key={card.recipe.id}
+                style={[s.popularItem, index < popularRecipes.length - 1 && s.popularDivider]}
+                onPress={() => openHomeCard(card)}
+              >
+                <View style={s.popularIcon}>
+                  <MaterialCommunityIcons name="trending-up" size={16} color={colors.primary} />
+                </View>
+                <Text style={s.popularTitle}>{card.recipe.title}</Text>
+                <Text style={s.popularMeta}>TOP {index + 1}</Text>
+              </Pressable>
+            ))}
+            {!popularRecipes.length && sortedSignals.slice(0, 4).map((recipe, index) => (
               <Pressable
                 key={recipe.id}
-                style={[s.popularItem, index < popularRecipes.length - 1 && s.popularDivider]}
+                style={[s.popularItem, index < 3 && s.popularDivider]}
                 onPress={() => openRecipePreview(recipe)}
               >
                 <View style={s.popularIcon}>
@@ -152,6 +201,13 @@ export default function Home() {
       </Animated.View>
     </SafeAreaView>
   );
+}
+
+function getRecipeIcon(themes: string[]) {
+  if (themes.includes('저칼로리')) return 'food-apple-outline' as const;
+  if (themes.includes('파티')) return 'silverware-fork-knife' as const;
+  if (themes.includes('캠핑')) return 'pot-steam-outline' as const;
+  return 'chef-hat' as const;
 }
 
 function Entry({
@@ -214,6 +270,16 @@ const s = StyleSheet.create({
     backgroundColor: colors.surfaceTint,
     borderWidth: 1,
     borderColor: colors.line,
+  },
+  featuredLoading: {
+    width: 144,
+    height: 122,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surfaceTint,
   },
   featuredVisual: {
     height: 66,

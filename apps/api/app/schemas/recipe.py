@@ -17,3 +17,12 @@ class RecipeRecommendation(BaseModel):
     missing: list[str]
     match_rate: float
     reason: str
+
+
+class HomeRecipeCard(BaseModel):
+    recipe: Recipe
+    popularity_score: float
+    search_volume: int
+    pantry_fit: int
+    common_ingredient_rate: int
+    highlight: str
