@@ -13,6 +13,7 @@ export default function Ingredients() {
   const [query, setQuery] = useState('');
   const [duplicateMessage, setDuplicateMessage] = useState('');
   const [highlightedIngredient, setHighlightedIngredient] = useState('');
+  const trimmedQuery = query.trim();
   const normalizedQuery = query.trim().toLowerCase();
   const canSubmit = d.ingredients.length > 0;
   const suggestedItems = useMemo(
@@ -25,7 +26,8 @@ export default function Ingredients() {
       : [],
     [normalizedQuery],
   );
-  const canAddCustom = normalizedQuery.length > 0 && !ingredientCatalog.includes(query.trim()) && !d.ingredients.includes(query.trim());
+  const isCatalogIngredient = ingredientCatalog.some(item => item === trimmedQuery);
+  const canAddCustom = normalizedQuery.length > 0 && !isCatalogIngredient && !d.ingredients.includes(trimmedQuery);
 
   useEffect(() => {
     if (!duplicateMessage) return;
@@ -80,7 +82,7 @@ export default function Ingredients() {
             <TextInput
               value={query}
               onChangeText={setQuery}
-              onSubmitEditing={() => query.trim() ? addIngredient(query.trim()) : undefined}
+              onSubmitEditing={() => trimmedQuery ? addIngredient(trimmedQuery) : undefined}
               placeholder="재료명을 입력하고 추가하세요"
               placeholderTextColor={colors.muted}
               style={s.input}
@@ -115,9 +117,9 @@ export default function Ingredients() {
                   s.customSearchItem,
                   !searchResults.length && s.searchItemLast,
                 ]}
-                onPress={() => addIngredient(query.trim())}
+                onPress={() => addIngredient(trimmedQuery)}
               >
-                <Text style={s.customSearchText}>"{query.trim()}" 직접 추가</Text>
+                <Text style={s.customSearchText}>"{trimmedQuery}" 직접 추가</Text>
                 <Text style={s.searchItemAction}>추가</Text>
               </Pressable>
             )}
