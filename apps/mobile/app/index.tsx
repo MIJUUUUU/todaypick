@@ -1,25 +1,45 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { recipeApi } from '../src/entities/recipe/api/recipeApi';
+import type { Recipe } from '../src/entities/recipe/model/types';
 import { colors } from '../src/shared/theme/colors';
 
-const featuredRecipes = [
-  { title: '된장찌개', time: '20분', icon: 'pot-steam-outline' as const },
-  { title: '제육볶음', time: '25분', icon: 'chef-hat' as const },
-  { title: '계란볶음밥', time: '10분', icon: 'rice' as const },
+type HomeRecipeSignal = {
+  id: string;
+  title: string;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  searchVolume: number;
+  pantryFit: number;
+  commonIngredientRate: number;
+};
+
+const recipeSignals: HomeRecipeSignal[] = [
+  { id: 'kimchi-pork-stirfry', title: '김치돼지고기볶음', icon: 'chef-hat', searchVolume: 96, pantryFit: 84, commonIngredientRate: 78 },
+  { id: 'gamja-egg-stirfry', title: '감자계란볶음', icon: 'rice', searchVolume: 92, pantryFit: 88, commonIngredientRate: 91 },
+  { id: 'kimchi-jeon', title: '김치전', icon: 'pot-steam-outline', searchVolume: 87, pantryFit: 82, commonIngredientRate: 76 },
+  { id: 'tofu-ramen-hotpot', title: '두부라면 전골', icon: 'food', searchVolume: 81, pantryFit: 85, commonIngredientRate: 80 },
+  { id: 'bacon-garlic-pasta', title: '베이컨 마늘 파스타', icon: 'silverware-fork-knife', searchVolume: 76, pantryFit: 72, commonIngredientRate: 69 },
+  { id: 'tofu-cabbage-salad-bowl', title: '두부 샐러드볼', icon: 'food-apple-outline', searchVolume: 73, pantryFit: 70, commonIngredientRate: 74 },
 ];
 
-const popularRecipes = [
-  { title: '김치찌개 황금레시피', time: '15분' },
-  { title: '간단 크림파스타', time: '18분' },
-  { title: '두부조림 반찬', time: '22분' },
-];
+function getHomeScore(signal: HomeRecipeSignal) {
+  return signal.searchVolume * 0.55 + signal.pantryFit * 0.3 + signal.commonIngredientRate * 0.15;
+}
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
+  const [openingId, setOpeningId] = useState<string | null>(null);
   const splashOpacity = useRef(new Animated.Value(1)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
+
+  const sortedSignals = useMemo(
+    () => [...recipeSignals].sort((a, b) => getHomeScore(b) - getHomeScore(a)),
+    []
+  );
+  const featuredRecipes = sortedSignals.slice(0, 3);
+  const popularRecipes = sortedSignals.slice(0, 4);
 
   useEffect(() => {
     const holdTimer = setTimeout(() => {
@@ -33,6 +53,27 @@ export default function Home() {
 
     return () => clearTimeout(holdTimer);
   }, [contentOpacity, splashOpacity]);
+
+  const openRecipePreview = async (signal: HomeRecipeSignal) => {
+    if (openingId) return;
+    setOpeningId(signal.id);
+    try {
+      const recipe = await recipeApi.detail(signal.id);
+      router.push({
+        pathname: '/recipe/[id]',
+        params: {
+          id: recipe.id,
+          data: JSON.stringify({
+            ...recipe,
+            reason: '최근 많이 찾았고 집에 자주 있는 재료로 바로 연결되기 쉬운 레시피예요.',
+          } satisfies Recipe),
+          source: 'home',
+        },
+      });
+    } finally {
+      setOpeningId(null);
+    }
+  };
 
   return (
     <SafeAreaView style={s.safe}>
@@ -56,15 +97,22 @@ export default function Home() {
           <Text style={s.subtitle}>지금 있는 재료와 오늘의 상황을 알려주면 바로 만들 수 있는 요리를 골라드려요.</Text>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featuredRow}>
-            {featuredRecipes.map(recipe => (
-              <View key={recipe.title} style={s.featuredCard}>
-                <View style={s.featuredVisual}>
-                  <MaterialCommunityIcons name={recipe.icon} size={24} color={colors.primary} />
-                </View>
-                <Text style={s.featuredTitle}>{recipe.title}</Text>
-                <Text style={s.featuredMeta}>{recipe.time}</Text>
-              </View>
-            ))}
+            {featuredRecipes.map(recipe => {
+              const isOpening = openingId === recipe.id;
+              return (
+                <Pressable key={recipe.id} style={s.featuredCard} onPress={() => openRecipePreview(recipe)}>
+                  <View style={s.featuredVisual}>
+                    {isOpening ? (
+                      <ActivityIndicator color={colors.primary} />
+                    ) : (
+                      <MaterialCommunityIcons name={recipe.icon} size={24} color={colors.primary} />
+                    )}
+                  </View>
+                  <Text style={s.featuredTitle}>{recipe.title}</Text>
+                  <Text style={s.featuredMeta}>인기 검색 · 재료 보유율 상위</Text>
+                </Pressable>
+              );
+            })}
           </ScrollView>
 
           <View style={s.actionCards}>
@@ -87,13 +135,17 @@ export default function Home() {
           <Text style={s.sectionTitle}>이번 주 인기 레시피</Text>
           <View style={s.popularList}>
             {popularRecipes.map((recipe, index) => (
-              <View key={recipe.title} style={[s.popularItem, index < popularRecipes.length - 1 && s.popularDivider]}>
+              <Pressable
+                key={recipe.id}
+                style={[s.popularItem, index < popularRecipes.length - 1 && s.popularDivider]}
+                onPress={() => openRecipePreview(recipe)}
+              >
                 <View style={s.popularIcon}>
                   <MaterialCommunityIcons name="trending-up" size={16} color={colors.primary} />
                 </View>
                 <Text style={s.popularTitle}>{recipe.title}</Text>
-                <Text style={s.popularMeta}>{recipe.time}</Text>
-              </View>
+                <Text style={s.popularMeta}>TOP {index + 1}</Text>
+              </Pressable>
             ))}
           </View>
         </ScrollView>
@@ -101,6 +153,7 @@ export default function Home() {
     </SafeAreaView>
   );
 }
+
 function Entry({
   title,
   text,
@@ -155,7 +208,7 @@ const s = StyleSheet.create({
   subtitle: { fontSize: 14, lineHeight: 22, color: colors.muted, marginBottom: 18 },
   featuredRow: { gap: 10, paddingBottom: 4, marginBottom: 18 },
   featuredCard: {
-    width: 124,
+    width: 144,
     borderRadius: 14,
     padding: 10,
     backgroundColor: colors.surfaceTint,
@@ -170,8 +223,8 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 8,
   },
-  featuredTitle: { fontSize: 12, fontWeight: '700', color: colors.ink, marginBottom: 2 },
-  featuredMeta: { fontSize: 11, color: colors.muted },
+  featuredTitle: { fontSize: 14, fontWeight: '700', color: colors.ink, marginBottom: 4 },
+  featuredMeta: { fontSize: 11, color: colors.muted, lineHeight: 16 },
   actionCards: { gap: 10, marginBottom: 20 },
   card: {
     backgroundColor: colors.surfaceTint,
