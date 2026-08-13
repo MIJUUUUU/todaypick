@@ -106,7 +106,7 @@ export default function Home() {
         <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
           <View style={s.header}>
             <Image source={require('../assets/logo-transparent.png')} style={s.logo} />
-            <Pressable style={s.profileButton}>
+            <Pressable style={s.profileButton} onPress={() => router.push('/collection')}>
               <MaterialCommunityIcons name="account-outline" size={18} color={colors.muted} />
             </Pressable>
           </View>
@@ -283,7 +283,7 @@ const s = StyleSheet.create({
   },
   greeting: { fontSize: 13, color: colors.muted, marginBottom: 14 },
   eyebrow: { fontSize: 11, letterSpacing: 1.5, color: colors.primary, fontWeight: '800', marginBottom: 6 },
-  title: { fontSize: 32, fontWeight: '800', color: colors.ink, marginBottom: 10 },
+  title: { fontSize: 22, fontWeight: '800', color: colors.ink, lineHeight: 32, marginBottom: 10 },
   subtitle: { fontSize: 14, lineHeight: 22, color: colors.muted, marginBottom: 18 },
   featuredHeader: { marginBottom: 12 },
   featuredHeaderTitle: { fontSize: 17, fontWeight: '800', color: colors.ink, marginBottom: 4 },

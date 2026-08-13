@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRecipeDiscovery } from '../src/features/recipe-discovery/model/useRecipeDiscovery';
 import { ingredientCatalog } from '../src/shared/config/ingredientCatalog';
 import { PrimaryButton } from '../src/shared/ui/PrimaryButton';
@@ -9,7 +9,6 @@ import { colors } from '../src/shared/theme/colors';
 
 export default function Ingredients() {
   const d = useRecipeDiscovery();
-  const selectedScrollRef = useRef<ScrollView>(null);
   const [query, setQuery] = useState('');
   const [duplicateMessage, setDuplicateMessage] = useState('');
   const [highlightedIngredient, setHighlightedIngredient] = useState('');
@@ -41,14 +40,6 @@ export default function Ingredients() {
     return () => clearTimeout(timer);
   }, [highlightedIngredient]);
 
-  useEffect(() => {
-    if (d.ingredients.length <= 8) return;
-    const timer = setTimeout(() => {
-      selectedScrollRef.current?.flashScrollIndicators();
-    }, 150);
-    return () => clearTimeout(timer);
-  }, [d.ingredients.length]);
-
   const showDuplicateFeedback = (name: string) => {
     setDuplicateMessage(`"${name}"은 이미 선택한 재료예요.`);
     setHighlightedIngredient(name);
@@ -73,7 +64,6 @@ export default function Ingredients() {
             </Pressable>
             <Text style={s.headerTitle}>재료로 찾기</Text>
           </View>
-          <Text style={s.eyebrow}>STEP 1 · INGREDIENTS</Text>
           <Text style={s.title}>어떤 재료가 있으신가요?</Text>
           <Text style={s.subtitle}>가지고 있는 재료를 추가하면 딱 맞는 레시피를 찾아드려요.</Text>
 
@@ -136,19 +126,9 @@ export default function Ingredients() {
               ))}
             </ScrollView>
           </View>
-        </ScrollView>
-
-        <View style={s.selectedSection}>
-          <Text style={s.panelTitle}>선택한 재료 {!!d.ingredients.length && `(${d.ingredients.length})`}</Text>
-          {!!d.ingredients.length ? (
-            <ScrollView
-              ref={selectedScrollRef}
-              style={s.selectedScrollable}
-              contentContainerStyle={s.selectedContent}
-              showsVerticalScrollIndicator
-              indicatorStyle="black"
-              alwaysBounceVertical={false}
-            >
+          <View style={s.selectedSection}>
+            <Text style={s.panelTitle}>선택한 재료 {!!d.ingredients.length && `(${d.ingredients.length})`}</Text>
+            {!!d.ingredients.length ? (
               <View style={s.row}>
                 {d.ingredients.map(item => (
                   <Pressable key={item} style={[s.chip, s.active, highlightedIngredient === item && s.activeHighlighted]} onPress={() => d.removeIngredient(item)}>
@@ -156,13 +136,13 @@ export default function Ingredients() {
                   </Pressable>
                 ))}
               </View>
-            </ScrollView>
-          ) : (
-            <View style={s.selectedEmpty}>
-              <Text style={s.emptyText}>아직 선택한 재료가 없어요.</Text>
-            </View>
-          )}
-        </View>
+            ) : (
+              <View style={s.selectedEmpty}>
+                <Text style={s.emptyText}>아직 선택한 재료가 없어요.</Text>
+              </View>
+            )}
+          </View>
+        </ScrollView>
 
         <View style={s.footer}>
           <Text style={s.helper}>
@@ -182,8 +162,8 @@ export default function Ingredients() {
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   screen: { flex: 1 },
-  topSection: { flexGrow: 0, flexShrink: 0 },
-  container: { padding: 24, paddingBottom: 24 },
+  topSection: { flex: 1 },
+  container: { padding: 24, paddingBottom: 32 },
   headerRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
   iconButton: {
     width: 32,
@@ -196,8 +176,7 @@ const s = StyleSheet.create({
     backgroundColor: colors.surfaceTint,
   },
   headerTitle: { fontSize: 15, fontWeight: '600', color: colors.ink },
-  eyebrow: { fontSize: 11, letterSpacing: 1.5, color: colors.primary, fontWeight: '800', marginBottom: 12 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.ink, lineHeight: 38, marginBottom: 8 },
+  title: { fontSize: 22, fontWeight: '800', color: colors.ink, lineHeight: 32, marginBottom: 8 },
   subtitle: { fontSize: 14, lineHeight: 22, color: colors.muted, marginBottom: 20 },
   searchBox: {
     borderWidth: 1,
@@ -245,33 +224,24 @@ const s = StyleSheet.create({
   searchItemAction: { color: colors.primary, fontWeight: '800', fontSize: 12 },
   searchItemSelected: { color: colors.muted, fontWeight: '800', fontSize: 12 },
   customSearchItem: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.surfaceTint,
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 18,
     marginTop: 8,
   },
-  customSearchText: { color: colors.primary, fontWeight: '800' },
+  customSearchText: { color: colors.ink, fontWeight: '700' },
   suggestedRow: { gap: 8, paddingRight: 24 },
   chip: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line, borderRadius: 22, paddingHorizontal: 14, paddingVertical: 12 },
   chipText: { color: colors.ink, fontWeight: '600' },
   customChip: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
   customChipText: { color: colors.primary, fontWeight: '800' },
-  active: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
-  activeHighlighted: { shadowColor: colors.primary, shadowOpacity: 0.22, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, transform: [{ scale: 1.03 }] },
-  activeText: { color: colors.primary, fontWeight: '800' },
+  active: { backgroundColor: colors.surface, borderColor: colors.ink },
+  activeHighlighted: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, transform: [{ scale: 1.03 }] },
+  activeText: { color: colors.ink, fontWeight: '700' },
   selectedSection: {
-    flex: 1,
-    minHeight: 0,
-    paddingHorizontal: 24,
-    paddingTop: 0,
-    paddingBottom: 12,
+    paddingTop: 6,
   },
-  selectedScrollable: {
-    flex: 1,
-    minHeight: 0,
-  },
-  selectedContent: { paddingBottom: 8, paddingRight: 4 },
   selectedEmpty: { paddingBottom: 4 },
   emptyText: { color: colors.muted, lineHeight: 22 },
   footer: {
