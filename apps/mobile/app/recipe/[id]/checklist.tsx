@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { Recipe } from '../../../src/entities/recipe/model/types';
 import { PrimaryButton } from '../../../src/shared/ui/PrimaryButton';
 import { colors } from '../../../src/shared/theme/colors';
@@ -17,42 +17,46 @@ export default function Checklist() {
 
   return (
     <SafeAreaView style={s.safe}>
-      <View style={s.container}>
-        <Pressable onPress={() => router.back()}>
-          <Text style={s.back}>← 레시피 상세</Text>
-        </Pressable>
-
-        <View style={s.badge}>
-          <Text style={s.badgeText}>재료 준비 확인</Text>
-        </View>
-
-        <Text style={s.title}>재료를 준비했는지 확인해주세요.</Text>
-        <Text style={s.subtitle}>준비가 끝난 재료를 체크하면 바로 조리를 시작할 수 있어요.</Text>
-
-        <View style={s.progress}>
-          <Text style={s.progressLabel}>준비 완료 {checked.length}/{recipe.ingredients.length}</Text>
-          <View style={s.track}>
-            <View style={[s.fill, { width: `${progress}%` }]} />
-          </View>
-        </View>
-
-        {recipe.ingredients.map(item => (
-          <Pressable style={s.item} key={item.name} onPress={() => toggle(item.name)}>
-            <Text style={s.box}>{checked.includes(item.name) ? '☑' : '☐'}</Text>
-            <Text style={s.itemName}>{item.name}</Text>
-            <Text style={s.muted}>{item.amount}</Text>
+      <View style={s.screen}>
+        <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
+          <Pressable onPress={() => router.back()}>
+            <Text style={s.back}>← 레시피 상세</Text>
           </Pressable>
-        ))}
 
-        <PrimaryButton
-          title="조리 시작 →"
-          onPress={() =>
-            router.push({
-              pathname: '/recipe/[id]/cooking',
-              params: { id: recipe.id, data: JSON.stringify(recipe) },
-            })
-          }
-        />
+          <View style={s.badge}>
+            <Text style={s.badgeText}>재료 준비 확인</Text>
+          </View>
+
+          <Text style={s.title}>재료를 준비했는지 확인해주세요.</Text>
+          <Text style={s.subtitle}>준비가 끝난 재료를 체크하면 바로 조리를 시작할 수 있어요.</Text>
+
+          <View style={s.progress}>
+            <Text style={s.progressLabel}>준비 완료 {checked.length}/{recipe.ingredients.length}</Text>
+            <View style={s.track}>
+              <View style={[s.fill, { width: `${progress}%` }]} />
+            </View>
+          </View>
+
+          {recipe.ingredients.map(item => (
+            <Pressable style={s.item} key={item.name} onPress={() => toggle(item.name)}>
+              <Text style={s.box}>{checked.includes(item.name) ? '☑' : '☐'}</Text>
+              <Text style={s.itemName}>{item.name}</Text>
+              <Text style={s.muted}>{item.amount}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+
+        <View style={s.footer}>
+          <PrimaryButton
+            title="조리 시작 →"
+            onPress={() =>
+              router.push({
+                pathname: '/recipe/[id]/cooking',
+                params: { id: recipe.id, data: JSON.stringify(recipe) },
+              })
+            }
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -60,7 +64,8 @@ export default function Checklist() {
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: 24 },
+  screen: { flex: 1 },
+  container: { padding: 24, paddingBottom: 24 },
   back: { color: colors.muted, marginBottom: 24, fontSize: 14 },
   badge: {
     alignSelf: 'flex-start',
@@ -95,4 +100,12 @@ const s = StyleSheet.create({
   box: { fontSize: 23 },
   itemName: { flex: 1, color: colors.ink, fontSize: 15 },
   muted: { color: colors.muted, fontSize: 14 },
+  footer: {
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    backgroundColor: colors.background,
+  },
 });

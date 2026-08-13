@@ -12,55 +12,73 @@ export default function RecipeDetail() {
 
   return (
     <SafeAreaView style={s.safe}>
-      <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
-        <Pressable onPress={() => router.back()}>
-          <Text style={s.back}>{backLabel}</Text>
-        </Pressable>
-        <View style={s.hero}>
-          <Text style={s.heroEmoji}>{recipe.emoji}</Text>
-        </View>
-        <Text style={s.title}>{recipe.title}</Text>
-        <Text style={s.meta}>
-          {recipe.cooking_time}분 · {recipe.difficulty} · {recipe.servings}인분
-        </Text>
-        <View style={s.reason}>
-          <Text style={s.reasonText}>💡 {recipe.reason || '가지고 있는 재료와 잘 어울리는 레시피예요.'}</Text>
-        </View>
-
-        <Text style={s.section}>재료</Text>
-        {recipe.ingredients.map(item => (
-          <View style={s.row} key={item.name}>
-            <Text style={s.rowText}>{item.name}</Text>
-            <Text style={s.muted}>{item.amount}</Text>
+      <View style={s.screen}>
+        <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
+          <Pressable onPress={() => router.back()}>
+            <Text style={s.back}>{backLabel}</Text>
+          </Pressable>
+          <View style={s.previewBadge}>
+            <Text style={s.previewBadgeText}>레시피 미리보기</Text>
           </View>
-        ))}
-
-        <Text style={s.section}>준비 과정</Text>
-        {recipe.preparation_steps?.map((step, index) => (
-          <Text style={s.step} key={index}>
-            {index + 1}. {step}
+          <View style={s.hero}>
+            <Text style={s.heroEmoji}>{recipe.emoji}</Text>
+          </View>
+          <Text style={s.title}>{recipe.title}</Text>
+          <Text style={s.meta}>
+            {recipe.cooking_time}분 · {recipe.difficulty} · {recipe.servings}인분
           </Text>
-        ))}
+          <View style={s.reason}>
+            <Text style={s.reasonText}>💡 {recipe.reason || '가지고 있는 재료와 잘 어울리는 레시피예요.'}</Text>
+          </View>
 
-        <Text style={s.warning}>⚠️ 고기와 계란은 속까지 충분히 익혀주세요. 조리 시간은 화력에 따라 달라질 수 있어요.</Text>
-        <PrimaryButton
-          title="재료 확인하기 →"
-          onPress={() =>
-            router.push({
-              pathname: '/recipe/[id]/checklist',
-              params: { id: recipe.id, data: JSON.stringify(recipe) },
-            })
-          }
-        />
-      </ScrollView>
+          <Text style={s.section}>재료</Text>
+          {recipe.ingredients.map(item => (
+            <View style={s.row} key={item.name}>
+              <Text style={s.rowText}>{item.name}</Text>
+              <Text style={s.muted}>{item.amount}</Text>
+            </View>
+          ))}
+
+          <Text style={s.section}>준비 과정</Text>
+          {recipe.preparation_steps?.map((step, index) => (
+            <Text style={s.step} key={index}>
+              {index + 1}. {step}
+            </Text>
+          ))}
+
+          <Text style={s.warning}>⚠️ 고기와 계란은 속까지 충분히 익혀주세요. 조리 시간은 화력에 따라 달라질 수 있어요.</Text>
+        </ScrollView>
+
+        <View style={s.footer}>
+          <PrimaryButton
+            title="재료 확인하기 →"
+            onPress={() =>
+              router.push({
+                pathname: '/recipe/[id]/checklist',
+                params: { id: recipe.id, data: JSON.stringify(recipe) },
+              })
+            }
+          />
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: 24, paddingBottom: 48 },
+  screen: { flex: 1 },
+  container: { padding: 24, paddingBottom: 24 },
   back: { color: colors.muted, marginBottom: 26, fontSize: 14 },
+  previewBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+    backgroundColor: colors.primarySoft,
+    marginBottom: 14,
+  },
+  previewBadgeText: { fontSize: 12, color: colors.primary, fontWeight: '800' },
   hero: {
     height: 180,
     borderRadius: 24,
@@ -82,4 +100,12 @@ const s = StyleSheet.create({
   muted: { color: colors.muted },
   step: { color: colors.ink, lineHeight: 24, marginBottom: 8 },
   warning: { marginTop: 22, padding: 14, borderRadius: 14, backgroundColor: '#FFF8E8', color: '#8D6E2C', lineHeight: 20, marginBottom: 18 },
+  footer: {
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    backgroundColor: colors.background,
+  },
 });
