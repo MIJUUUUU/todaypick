@@ -1,4 +1,5 @@
 export type Ingredient = { name: string; amount: string; required: boolean; substitutes?: string[] };
+export type CookingStepGuide = { minutes: number; cue: string };
 export type Recipe = {
   id: string;
   title: string;
@@ -13,6 +14,7 @@ export type Recipe = {
   ingredients: Ingredient[];
   preparation_steps: string[];
   cooking_steps: string[];
+  cooking_step_guides?: CookingStepGuide[];
   safety_notes: string[];
   match_rate?: number;
   missing?: string[];

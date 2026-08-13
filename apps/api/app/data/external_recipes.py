@@ -35,6 +35,10 @@ EXTERNAL_FALLBACK_RECIPES: list[Recipe] = [
         ],
         preparation_steps=["양배추를 한입 크기로 썰어요."],
         cooking_steps=["냄비에 물을 붓고 양배추를 끓여요.", "대파와 마늘을 넣고 한소끔 더 끓여요."],
+        cooking_step_guides=[
+            {"minutes": 6, "cue": "양배추가 숨이 죽고 국물에 단맛이 배기기 시작할 때까지 끓여주세요."},
+            {"minutes": 3, "cue": "대파 향이 올라오고 마늘이 국물에 퍼질 정도로만 더 끓이면 좋아요."},
+        ],
         safety_notes=["뜨거운 국물을 옮길 때 주의하세요."],
     ),
     Recipe(

@@ -8,6 +8,11 @@ class Ingredient(BaseModel):
     substitutes: list[str] = Field(default_factory=list)
 
 
+class CookingStepGuide(BaseModel):
+    minutes: int
+    cue: str
+
+
 class Recipe(BaseModel):
     id: str
     title: str
@@ -22,6 +27,7 @@ class Recipe(BaseModel):
     ingredients: list[Ingredient]
     preparation_steps: list[str]
     cooking_steps: list[str]
+    cooking_step_guides: list[CookingStepGuide] = Field(default_factory=list)
     safety_notes: list[str]
     match_rate: float | None = None
     missing: list[str] | None = None

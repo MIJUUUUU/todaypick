@@ -23,6 +23,7 @@ class RecipeModel(Base):
     cooking_time: Mapped[int] = mapped_column(Integer, nullable=False)
     preparation_steps: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
     cooking_steps: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
+    cooking_step_guides: Mapped[list[dict[str, object]]] = mapped_column(JSONB, nullable=False, default=list)
     safety_notes: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
 
     ingredients: Mapped[list[RecipeIngredientModel]] = relationship(

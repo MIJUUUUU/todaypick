@@ -56,6 +56,7 @@ class SqlAlchemyRecipeRepository:
                 cooking_time=recipe.cooking_time,
                 preparation_steps=recipe.preparation_steps,
                 cooking_steps=recipe.cooking_steps,
+                cooking_step_guides=[guide.model_dump() for guide in recipe.cooking_step_guides],
                 safety_notes=recipe.safety_notes,
             )
             self._session.add(recipe_row)
@@ -241,5 +242,6 @@ class SqlAlchemyRecipeRepository:
             ],
             preparation_steps=recipe.preparation_steps,
             cooking_steps=recipe.cooking_steps,
+            cooking_step_guides=recipe.cooking_step_guides or [],
             safety_notes=recipe.safety_notes,
         )
