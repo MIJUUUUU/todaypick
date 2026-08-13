@@ -69,7 +69,7 @@ const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   screen: { flex: 1 },
   container: { padding: 24, paddingBottom: 24 },
-  back: { color: colors.muted, marginBottom: 26, fontSize: 14 },
+  back: { color: colors.muted, marginBottom: 24, fontSize: 14 },
   previewBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
