@@ -118,7 +118,6 @@ export default function Home() {
 
           <View style={s.featuredHeader}>
             <Text style={s.featuredHeaderTitle}>오늘 이런 메뉴 어때요?</Text>
-            <Text style={s.featuredHeaderText}>지금 바로 해먹기 좋은 대표 메뉴를 골랐어요.</Text>
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featuredRow}>
