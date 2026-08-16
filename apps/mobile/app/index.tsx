@@ -112,7 +112,6 @@ export default function Home() {
           </View>
 
           <Text style={s.greeting}>미주님, 저녁 메뉴 정하셨어요?</Text>
-          <Text style={s.eyebrow}>TODAYPICK · RECIPE ASSISTANT</Text>
           <Text style={s.title}>오늘 뭐 해먹지?</Text>
           <Text style={s.subtitle}>지금 있는 재료와 오늘의 상황을 알려주면 바로 만들 수 있는 요리를 골라드려요.</Text>
 
@@ -165,9 +164,10 @@ export default function Home() {
             <Entry
               title="재료로 찾기"
               text="냉장고 속 재료로 추천받기"
-              hint="냉장고 재료 기반 추천"
+              hint="감자, 계란, 김치처럼 지금 있는 재료로 바로 시작"
               icon="fridge-outline"
               path="/ingredients"
+              variant="ingredient"
             />
             <Entry
               title="테마로 찾기"
@@ -175,6 +175,7 @@ export default function Home() {
               hint="#자취요리  #저칼로리  #파티"
               icon="silverware-fork-knife"
               path="/themes"
+              variant="theme"
             />
           </View>
 
@@ -186,11 +187,17 @@ export default function Home() {
                 style={[s.popularItem, index < popularRecipes.length - 1 && s.popularDivider]}
                 onPress={() => openHomeCard(card)}
               >
-                <View style={s.popularIcon}>
-                  <MaterialCommunityIcons name="trending-up" size={16} color={colors.primary} />
+                <View style={s.popularThumb}>
+                  {card.recipe.thumbnail_url ? (
+                    <Image source={{ uri: card.recipe.thumbnail_url }} style={s.popularThumbImage} />
+                  ) : (
+                    <MaterialCommunityIcons name={getRecipeIcon(card.recipe.themes)} size={18} color={colors.muted} />
+                  )}
                 </View>
-                <Text style={s.popularTitle}>{card.recipe.title}</Text>
-                <Text style={s.popularMeta}>TOP {index + 1}</Text>
+                <View style={s.popularBody}>
+                  <Text style={s.popularTitle}>{card.recipe.title}</Text>
+                  <Text style={s.popularSub}>{card.recipe.cooking_time}분 · {card.recipe.difficulty}</Text>
+                </View>
               </Pressable>
             ))}
             {!popularRecipes.length && sortedSignals.slice(0, 4).map((recipe, index) => (
@@ -199,11 +206,13 @@ export default function Home() {
                 style={[s.popularItem, index < 3 && s.popularDivider]}
                 onPress={() => openRecipePreview(recipe)}
               >
-                <View style={s.popularIcon}>
-                  <MaterialCommunityIcons name="trending-up" size={16} color={colors.primary} />
+                <View style={s.popularThumb}>
+                  <MaterialCommunityIcons name={recipe.icon} size={18} color={colors.muted} />
                 </View>
-                <Text style={s.popularTitle}>{recipe.title}</Text>
-                <Text style={s.popularMeta}>TOP {index + 1}</Text>
+                <View style={s.popularBody}>
+                  <Text style={s.popularTitle}>{recipe.title}</Text>
+                  <Text style={s.popularSub}>{getFeaturedCopy(recipe.id)}</Text>
+                </View>
               </Pressable>
             ))}
           </View>
@@ -238,26 +247,36 @@ function Entry({
   hint,
   icon,
   path,
+  variant,
 }: {
   title: string;
   text: string;
   hint: string;
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   path: '/ingredients' | '/themes';
+  variant: 'ingredient' | 'theme';
 }) {
+  const isIngredient = variant === 'ingredient';
   return (
-    <Pressable style={s.card} onPress={() => router.push(path)}>
+    <Pressable style={[s.card, isIngredient ? s.cardIngredient : s.cardTheme]} onPress={() => router.push(path)}>
       <View style={s.cardRow}>
-        <View style={s.cardIconWrap}>
-          <MaterialCommunityIcons name={icon} size={20} color={colors.primary} />
+        <View style={[s.cardIconWrap, isIngredient ? s.cardIconIngredient : s.cardIconTheme]}>
+          <MaterialCommunityIcons name={icon} size={20} color={isIngredient ? colors.ink : colors.primary} />
         </View>
         <View style={s.cardBody}>
           <Text style={s.cardTitle}>{title}</Text>
           <Text style={s.cardText}>{text}</Text>
         </View>
-        <MaterialCommunityIcons name="arrow-right" size={18} color={colors.primary} />
+        <MaterialCommunityIcons name="arrow-right" size={18} color={isIngredient ? colors.ink : colors.primary} />
       </View>
-      <Text style={s.cardHint}>{hint}</Text>
+      {isIngredient ? (
+        <View style={s.cardInputMock}>
+          <MaterialCommunityIcons name="magnify" size={14} color={colors.muted} />
+          <Text style={s.cardInputText}>재료를 입력하고 바로 추천받기</Text>
+        </View>
+      ) : (
+        <Text style={s.cardHint}>{hint}</Text>
+      )}
     </Pressable>
   );
 }
@@ -281,7 +300,6 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   greeting: { fontSize: 13, color: colors.muted, marginBottom: 14 },
-  eyebrow: { fontSize: 11, letterSpacing: 1.5, color: colors.primary, fontWeight: '800', marginBottom: 6 },
   title: { fontSize: 22, fontWeight: '800', color: colors.ink, lineHeight: 32, marginBottom: 10 },
   subtitle: { fontSize: 14, lineHeight: 22, color: colors.muted, marginBottom: 18 },
   featuredHeader: { marginBottom: 12 },
@@ -320,37 +338,56 @@ const s = StyleSheet.create({
   featuredMeta: { fontSize: 12, color: colors.muted, lineHeight: 18 },
   actionCards: { gap: 10, marginBottom: 20 },
   card: {
-    backgroundColor: colors.surfaceTint,
     borderRadius: 14,
     padding: 16,
     borderWidth: 1,
     borderColor: colors.line,
   },
+  cardIngredient: { backgroundColor: '#FFFFFF' },
+  cardTheme: { backgroundColor: colors.surfaceTint },
   cardRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   cardIconWrap: {
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  cardIconIngredient: { backgroundColor: '#F5F5F7' },
+  cardIconTheme: { backgroundColor: colors.primarySoft },
   cardBody: { flex: 1 },
   cardTitle: { fontSize: 15, fontWeight: '700', color: colors.ink, marginBottom: 2 },
   cardText: { fontSize: 13, color: colors.muted },
   cardHint: { fontSize: 11, color: colors.primary, marginTop: 10, marginLeft: 52 },
+  cardInputMock: {
+    marginTop: 12,
+    marginLeft: 52,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: '#FAFAFB',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  cardInputText: { fontSize: 12, color: colors.muted },
   sectionTitle: { fontSize: 15, fontWeight: '700', color: colors.ink, marginBottom: 10 },
   popularList: { marginBottom: 8 },
   popularItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12 },
   popularDivider: { borderBottomWidth: 1, borderBottomColor: colors.line },
-  popularIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: colors.primarySoft,
+  popularThumb: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: colors.surfaceTint,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  popularTitle: { flex: 1, fontSize: 13, color: colors.ink },
-  popularMeta: { fontSize: 12, color: colors.muted },
+  popularThumbImage: { width: '100%', height: '100%' },
+  popularBody: { flex: 1 },
+  popularTitle: { fontSize: 13, color: colors.ink, marginBottom: 3, fontWeight: '600' },
+  popularSub: { fontSize: 11, color: colors.muted },
 });
