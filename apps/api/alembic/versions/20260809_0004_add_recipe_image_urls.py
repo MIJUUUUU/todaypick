@@ -27,3 +27,4 @@ def downgrade() -> None:
     op.drop_column("recipes", "image_credit")
     op.drop_column("recipes", "image_url")
     op.drop_column("recipes", "thumbnail_url")
+activate

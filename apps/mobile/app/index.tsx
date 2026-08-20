@@ -195,7 +195,12 @@ export default function Home() {
                   )}
                 </View>
                 <View style={s.popularBody}>
-                  <Text style={s.popularTitle}>{card.recipe.title}</Text>
+                  <View style={s.popularTopRow}>
+                    <Text style={s.popularTitle}>{card.recipe.title}</Text>
+                    <View style={s.popularBadge}>
+                      <Text style={s.popularBadgeText}>{getPopularBadge(card.recipe.id)}</Text>
+                    </View>
+                  </View>
                   <Text style={s.popularSub}>{card.recipe.cooking_time}분 · {card.recipe.difficulty}</Text>
                 </View>
               </Pressable>
@@ -210,7 +215,12 @@ export default function Home() {
                   <MaterialCommunityIcons name={recipe.icon} size={18} color={colors.muted} />
                 </View>
                 <View style={s.popularBody}>
-                  <Text style={s.popularTitle}>{recipe.title}</Text>
+                  <View style={s.popularTopRow}>
+                    <Text style={s.popularTitle}>{recipe.title}</Text>
+                    <View style={s.popularBadge}>
+                      <Text style={s.popularBadgeText}>{getPopularBadge(recipe.id)}</Text>
+                    </View>
+                  </View>
                   <Text style={s.popularSub}>{getFeaturedCopy(recipe.id)}</Text>
                 </View>
               </Pressable>
@@ -239,6 +249,18 @@ function getFeaturedCopy(recipeId: string) {
     'tofu-cabbage-salad-bowl': '가볍게 먹기 좋아요',
   };
   return labels[recipeId] ?? '오늘의 추천 메뉴';
+}
+
+function getPopularBadge(recipeId: string) {
+  const labels: Record<string, string> = {
+    'gamja-egg-stirfry': '간편',
+    'kimchi-pork-stirfry': '인기',
+    'kimchi-jeon': '단골',
+    'tofu-ramen-hotpot': '활용',
+    'bacon-garlic-pasta': '분위기',
+    'tofu-cabbage-salad-bowl': '가벼움',
+  };
+  return labels[recipeId] ?? '추천';
 }
 
 function Entry({
@@ -374,13 +396,20 @@ const s = StyleSheet.create({
   },
   cardInputText: { fontSize: 12, color: colors.muted },
   sectionTitle: { fontSize: 15, fontWeight: '700', color: colors.ink, marginBottom: 10 },
-  popularList: { marginBottom: 8 },
-  popularItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12 },
+  popularList: {
+    marginBottom: 8,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
+  popularItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 14 },
   popularDivider: { borderBottomWidth: 1, borderBottomColor: colors.line },
   popularThumb: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 14,
     backgroundColor: colors.surfaceTint,
     alignItems: 'center',
     justifyContent: 'center',
@@ -388,6 +417,14 @@ const s = StyleSheet.create({
   },
   popularThumbImage: { width: '100%', height: '100%' },
   popularBody: { flex: 1 },
-  popularTitle: { fontSize: 13, color: colors.ink, marginBottom: 3, fontWeight: '600' },
-  popularSub: { fontSize: 11, color: colors.muted },
+  popularTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 4 },
+  popularTitle: { flex: 1, fontSize: 14, color: colors.ink, fontWeight: '700' },
+  popularSub: { fontSize: 12, color: colors.muted },
+  popularBadge: {
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: colors.primarySoft,
+  },
+  popularBadgeText: { fontSize: 11, lineHeight: 13, color: colors.primary, fontWeight: '700' },
 });
